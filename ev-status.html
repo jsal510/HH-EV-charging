@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EV Charging Status</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 30px auto;
+      max-width: 600px;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>EV Charging Status</h1>
+  <form id="chargingForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="time" id="startTime" required />
+    <input type="time" id="endTime" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <table id="statusTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Time Remaining</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('chargingForm');
+    const tableBody = document.querySelector('#statusTable tbody');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const start = document.getElementById('startTime').value;
+      const end = document.getElementById('endTime').value;
+
+      const now = new Date();
+      const [endH, endM] = end.split(':').map(Number);
+      const endTime = new Date();
+      endTime.setHours(endH, endM, 0, 0);
+
+      const remaining = Math.max(0, Math.floor((endTime - now) / 60000));
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${start}</td>
+        <td>${end}</td>
+        <td class="remaining">${remaining > 0 ? remaining + ' min' : 'Done'}</td>
+      `;
+      tableBody.appendChild(row);
+      form.reset();
+    });
+
+    setInterval(() => {
+      document.querySelectorAll('.remaining').forEach(cell => {
+        const row = cell.parentElement;
+        const end = row.children[2].textContent;
+        const [h, m] = end.split(':').map(Number);
+        const endTime = new Date();
+        endTime.setHours(h, m, 0, 0);
+        const now = new Date();
+        const remaining = Math.max(0, Math.floor((endTime - now) / 60000));
+        cell.textContent = remaining > 0 ? remaining + ' min' : 'Done';
+      });
+    }, 60000);
+  </script>
+</body>
+</html>
