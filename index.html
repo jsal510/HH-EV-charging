@@ -66,13 +66,14 @@
             background-color: #000;
             color: #fff;
             border: none;
-            padding: 5px 10px;
+            padding: 0;
             cursor: pointer;
             width: 20px;
             height: 20px;
-            line-height: 1;
+            line-height: 20px;
             display: inline-block;
             text-align: center;
+            font-size: 16px;
         }
         .delete-btn:hover {
             background-color: #333;
@@ -170,11 +171,11 @@
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedStart = `<b>${timeStart}</b> - ${dateStart}`;
+                const formattedStart = `<span style="font-size: 0.67em;">${dateStart}</span> - <b>${timeStart}</b>`;
                 
                 const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedEnd = `<b>${timeEnd}</b> - ${dateEnd}`;
+                const formattedEnd = `<span style="font-size: 0.67em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
