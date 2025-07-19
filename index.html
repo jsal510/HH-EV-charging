@@ -1,112 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>EV Charging Status</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Orbitron', sans-serif;
-      background-color: #222;
+      background: #232323;
       color: #fff;
+      font-family: 'Orbitron', Arial, sans-serif;
+    }
+    h1 {
       text-align: center;
-      padding-top: 40px;
+      margin-top: 40px;
+      font-size: 2.7em;
+      letter-spacing: 2px;
+      font-weight: 700;
     }
-    input, button {
-      font-family: inherit;
-      font-size: 16px;
-      padding: 5px 10px;
+    .container {
+      max-width: 950px;
+      margin: 50px auto 0;
+      padding: 30px;
+      background: #191919;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #000a;
     }
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 80%;
+    form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 35px;
+      gap: 10px;
     }
-    th, td {
-      padding: 12px;
+    label {
+      font-size: 1.1em;
+      margin-right: 7px;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 7px 10px;
       border: 1px solid #444;
+      border-radius: 5px;
+      background: #222;
+      color: #fff;
+      font-size: 1em;
+      font-family: inherit;
+      outline: none;
     }
-    th {
-      background-color: #111;
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: #61dafb;
     }
-    td {
-      background-color: #333;
-    }
-    .delete-btn {
-      background-color: #900;
+    button, input[type="submit"] {
+      font-family: inherit;
+      background: #232323;
       color: #fff;
       border: none;
+      padding: 9px 20px;
+      font-size: 1.1em;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: 700;
+      transition: background 0.15s;
+      box-shadow: 0 1px 3px #0006;
+    }
+    button.delete {
+      background: #a90000;
+      color: #fff;
+    }
+    button.delete:hover {
+      background: #e53935;
+    }
+    button:hover, input[type="submit"]:hover {
+      background: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid #3a3a3a;
+      font-size: 1.13em;
+      font-family: 'Orbitron', Arial, sans-serif;
+    }
+    th {
+      background: #111;
+      color: #fff;
+      font-size: 1.15em;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    tr:last-child td {
+      border-bottom: none;
     }
   </style>
 </head>
 <body>
   <h1>🚗 EV Charging Status</h1>
-  <div>
-    <label>Name: <input type="text" id="name" /></label>
-    <label>Hours: <input type="number" id="hours" /></label>
-    <button onclick="submitData()">Submit</button>
+  <div class="container">
+    <form id="chargeForm">
+      <label for="name">Name:</label>
+      <input id="name" type="text" required>
+      <label for="hours">Hours:</label>
+      <input id="hours" type="number" min="0.25" step="0.25" required>
+      <input type="submit" value="Submit">
+    </form>
+    <table id="statusTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Left</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows inserted by JS -->
+      </tbody>
+    </table>
   </div>
-  <table id="data-table">
-    <thead>
-      <tr><th>Name</th><th>Start</th><th>End</th><th>Left</th><th>Delete</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
   <script>
-    const url = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
+    // ---- SET THIS TO YOUR GOOGLE APPS SCRIPT URL ----
+    const API_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
 
-    async function loadData() {
+    // Fetch and render all rows
+    async function loadTable() {
       try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const tbody = document.querySelector('#data-table tbody');
+        const res = await fetch(API_URL);
+        const rows = await res.json();
+        const tbody = document.querySelector('#statusTable tbody');
         tbody.innerHTML = '';
-        data.forEach(({ name, startTime, endTime, left }) => {
-          const row = `<tr>
-            <td>${name}</td>
-            <td>${new Date(startTime).toLocaleTimeString()}</td>
-            <td>${new Date(endTime).toLocaleTimeString()}</td>
-            <td>${left}</td>
-            <td><button class="delete-btn" onclick="deleteEntry('${name}')">Delete</button></td>
-          </tr>`;
-          tbody.insertAdjacentHTML('beforeend', row);
-        });
-      } catch (err) {
+        // skip header if present
+        for (let i = 1; i < rows.length; i++) {
+          const [name, start, end, left] = rows[i];
+          // Defensive parse: fallback to "" if missing
+          const startStr = (start && start !== "Start") ? formatDate(start) : '';
+          const endStr = (end && end !== "End") ? formatDate(end) : '';
+          const leftStr = calcLeft(end);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${name || ''}</td>
+            <td>${startStr}</td>
+            <td>${endStr}</td>
+            <td>${leftStr}</td>
+            <td><button class="delete" onclick="deleteRow('${name}','${start}')">Delete</button></td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (e) {
         alert('Failed to fetch data');
       }
     }
 
-    async function submitData() {
-      const name = document.getElementById('name').value;
-      const hours = document.getElementById('hours').value;
-      if (!name || !hours) return alert("Both fields required");
-
-      try {
-        await fetch(url, {
-          method: 'POST',
-          body: JSON.stringify({ name, hours }),
-        });
-        loadData();
-      } catch (err) {
-        alert('Failed to submit data');
-      }
+    // Format ISO string to readable local string
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return isNaN(d) ? "" : d.toLocaleString();
     }
 
-    async function deleteEntry(name) {
+    // Calculate time left (hh:mm)
+    function calcLeft(endStr) {
+      if (!endStr) return '';
+      const end = new Date(endStr);
+      if (isNaN(end)) return '';
+      const now = new Date();
+      const ms = end - now;
+      if (ms < 0) return "Done";
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      return `${h}:${m.toString().padStart(2, "0")}`;
+    }
+
+    // Add row handler
+    document.getElementById('chargeForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const hours = document.getElementById('hours').value.trim();
+      if (!name || !hours) return;
+      const params = new URLSearchParams();
+      params.append('name', name);
+      params.append('hours', hours);
       try {
-        await fetch(url, {
-          method: 'DELETE',
-          body: JSON.stringify({ name }),
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: params
         });
-        loadData();
-      } catch (err) {
+        if (!res.ok) throw new Error('Failed to submit');
+        await loadTable();
+        document.getElementById('chargeForm').reset();
+      } catch (e) {
+        alert('Failed to submit');
+      }
+    };
+
+    // Delete handler
+    window.deleteRow = async function(name, start) {
+      if (!confirm(`Delete entry for ${name}?`)) return;
+      try {
+        const res = await fetch(API_URL, {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ name, start })
+        });
+        if (!res.ok) throw new Error('Failed to delete');
+        await loadTable();
+      } catch (e) {
         alert('Failed to delete');
       }
-    }
+    };
 
-    loadData();
+    // Load table on start
+    loadTable();
   </script>
 </body>
 </html>
