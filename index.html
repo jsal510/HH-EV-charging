@@ -14,29 +14,20 @@
         h1 {
             font-weight: bold;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             color: #fff;
-            font-size: 1.2em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         form {
             display: flex;
             justify-content: center;
-            align-items: stretch;
-            margin-bottom: 10px;
-            flex-wrap: nowrap;
-        }
-        .inputs-wrapper {
-            display: flex;
-            flex-direction: column;
-            flex: 2;
-            margin-right: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         input {
-            margin-bottom: 5px;
-            padding: 6px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
@@ -45,24 +36,19 @@
             min-width: 100px;
         }
         button {
-            background-color: #7BAFD4;
+            background-color: #7BAFD4; /* North Carolina Blue */
             color: #fff;
             border: none;
-            padding: 6px 15px;
+            padding: 10px 20px;
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
-            flex: 1;
-            min-height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         button:hover {
-            background-color: #4B9CD3;
+            background-color: #4B9CD3; /* Darker NC Blue */
         }
         button:active {
-            background-color: #13294B;
+            background-color: #13294B; /* Navy */
         }
         .table-container {
             overflow-x: auto;
@@ -76,7 +62,7 @@
         }
         th, td {
             border: 1px solid #555;
-            padding: 6px;
+            padding: 8px;
             text-align: center;
         }
         th {
@@ -105,19 +91,6 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
-            form {
-                flex-wrap: nowrap;
-            }
-            .inputs-wrapper {
-                flex: 2;
-                margin-right: 5px;
-            }
-            input {
-                margin-bottom: 5px;
-            }
-            button {
-                flex: 1;
-            }
             table {
                 border: 0;
             }
@@ -125,66 +98,29 @@
                 display: none;
             }
             tr {
-                margin-bottom: 5px;
+                margin-bottom: 10px;
                 display: block;
                 border: 1px solid #555;
-                padding: 3px;
-                background-color: #333;
-                position: relative;
             }
             td {
-                border: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 12px;
+                display: block;
+                text-align: right;
+                font-size: 13px;
+                border-bottom: 1px dotted #555;
                 position: relative;
-                padding: 1px 0;
-                line-height: 1.1;
-                text-align: center;
+                padding-left: 50%;
             }
             td:before {
                 content: attr(data-label);
-                flex: 1 0 33%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                font-weight: normal;
-                font-size: 0.9em;
-            }
-            td .value {
-                flex: 2 0 67%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            td[data-label="Name"] {
-                justify-content: center;
-                padding: 3px 0;
-                font-size: 1.1em;
-                font-weight: bold;
-            }
-            td[data-label="Name"]:before {
-                display: none;
-            }
-            td[data-label="Name"] .value {
-                flex: none;
-            }
-            td[data-label="Time Left"] .value {
-                font-size: 1.5em;
-                font-weight: bold;
-            }
-            td[data-label=""] {
                 position: absolute;
-                top: 3px;
-                right: 3px;
-                padding: 0;
-                border: none;
-                background: none;
-                text-align: center;
-                display: block;
+                left: 0;
+                width: 50%;
+                padding-left: 15px;
+                font-weight: bold;
+                text-align: left;
+            }
+            td:last-child {
+                border-bottom: 0;
             }
         }
     </style>
@@ -192,11 +128,9 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <div class="inputs-wrapper">
-            <input id="name" placeholder="Name" required>
-            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
-        </div>
-        <button type="submit" id="submitBtn" disabled>Submit</button>
+        <input id="name" placeholder="Name" required>
+        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        <button type="submit">Submit</button>
     </form>
     <div class="table-container">
         <table id="statusTable">
@@ -206,7 +140,7 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
-                    <th></th> /* Empty header for delete column */
+                    <th></th> <!-- Empty header for delete column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -223,11 +157,9 @@
                 .then(data => {
                     currentData = data;
                     renderTable();
-                    document.getElementById('submitBtn').disabled = false; // Enable submit after load
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);
-                    document.getElementById('submitBtn').disabled = false; // Enable even on error
                 });
         }
 
@@ -246,7 +178,6 @@
                     currentData = data;
                     renderTable();
                     document.getElementById('hours').value = '';
-                    loadData(); // Immediate refresh after submit
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
@@ -258,16 +189,15 @@
             if (confirm('Are you sure you want to delete this entry?')) {
                 const params = `?action=delete&start=${encodeURIComponent(start)}`;
                 fetch(scriptURL + params)
-                .then(response => response.json())
-                .then(data => {
-                    currentData = data;
-                    renderTable();
-                    loadData(); // Immediate refresh after delete
-                })
-                .catch(error => {
-                    console.error('Delete error:', error);
-                    alert('Error deleting entry. Check console for details.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        currentData = data;
+                        renderTable();
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        alert('Error deleting entry. Check console for details.');
+                    });
             }
         }
 
@@ -286,15 +216,21 @@
                     const secsLeft = Math.floor((remainingMs % 60000) / 1000);
                     left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
                 }
-                const formattedStart = `${startDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} - ${startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
-                const formattedEnd = `${endDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} - ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+                const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                const formattedStart = `<span style="font-size: 0.67em;">${dateStart}</span> - <b>${timeStart}</b>`;
+                
+                const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                const formattedEnd = `<span style="font-size: 0.67em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${entry.Name}</td>
-                    <td>${formattedStart}</td>
-                    <td>${formattedEnd}</td>
-                    <td>${left}</td>
-                    <td><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label="Name">${entry.Name}</td>
+                    <td data-label="Start">${formattedStart}</td>
+                    <td data-label="End">${formattedEnd}</td>
+                    <td data-label="Time Left">${left}</td>
+                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -309,8 +245,8 @@
         // Initial load
         loadData();
 
-        // Update "Left" dynamically every 5 seconds
-        setInterval(renderTable, 5000);
+        // Auto-refresh data and update "Time Left" every 10 seconds
+        setInterval(loadData, 10000);
     </script>
 </body>
 </html>
