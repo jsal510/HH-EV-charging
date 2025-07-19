@@ -21,6 +21,7 @@
             font-weight: 700;
             margin-bottom: 20px;
             text-align: center;
+            white-space: nowrap;
         }
         .form-container {
             width: 100%;
@@ -36,6 +37,7 @@
             display: block;
             font-size: 1.2em;
             margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
         }
         input {
             width: 100%;
@@ -52,20 +54,21 @@
             padding: 10px;
             font-size: 1.2em;
             font-family: 'Orbitron', sans-serif;
-            background-color: #6c6c6c; /* Gray color */
+            background-color: #6c6c6c;
             color: white;
             border: none;
             cursor: pointer;
         }
         button:hover {
-            background-color: #4d4d4d; /* Darker gray on hover */
+            background-color: #4d4d4d;
         }
         button:active {
-            background-color: #000080; /* Navy blue when clicked */
+            background-color: #000080;
         }
         .delete-btn {
             background-color: #ff4444;
             width: 70px;
+            font-family: 'Orbitron', sans-serif;
         }
         .delete-btn:hover {
             background-color: #cc0000;
@@ -82,24 +85,18 @@
         }
         .entry div {
             padding: 5px;
+            font-family: 'Orbitron', sans-serif;
         }
         .error {
             color: #ff5555;
             margin-top: 10px;
+            font-family: 'Orbitron', sans-serif;
         }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8em;
-            }
-            .form-container {
-                flex-direction: column;
-            }
-            input, button {
-                font-size: 0.9em;
-            }
-            .entry {
-                grid-template-columns: 1fr 1fr 1fr 1fr 50px;
-            }
+            h1 { font-size: 1.8em; }
+            .form-container { flex-direction: column; }
+            input, button { font-size: 0.9em; }
+            .entry { grid-template-columns: 1fr 1fr 1fr 1fr 50px; }
         }
     </style>
 </head>
@@ -119,21 +116,18 @@
     <div id="error" class="error"></div>
     <div class="entries" id="entries"></div>
 
-    <!-- UI Formatting Comments:
-     - Title: Bold Orbitron font, single line via font-size and text-align.
-     - Inputs: Name and Hours on same line via flex display in .form-container.
-     - Font: Orbitron applied globally to body, labels, inputs, button.
-     - Memory: Last name saved/loaded via localStorage in script.
-     - Lock: These styles are fixed; modify only if spec changes.
+    <!-- UI Formatting Comments (Locked):
+     - Title: Bold Orbitron, single line (white-space: nowrap).
+     - Inputs: Name and Hours on one line (flex in .form-container).
+     - Font: Orbitron globally applied (body, labels, inputs, buttons, entries, error).
+     - Memory: Last name via localStorage (persistent across sessions).
+     - Lock: Styles fixed; modify only with explicit spec change.
     -->
 
     <script>
-        // Load last name from localStorage on page load
         document.addEventListener('DOMContentLoaded', () => {
             const lastName = localStorage.getItem('lastName');
-            if (lastName) {
-                document.getElementById('name').value = lastName;
-            }
+            if (lastName) document.getElementById('name').value = lastName;
         });
 
         async function loadEntries() {
@@ -143,12 +137,11 @@
                 const entriesDiv = document.getElementById('entries');
                 entriesDiv.innerHTML = '';
                 const now = new Date();
-                data.slice(1).forEach(entry => { // Skip header
+                data.slice(1).forEach(entry => {
                     const start = new Date(entry.Start);
                     const end = new Date(entry.End);
                     const leftMs = end - now;
                     const left = leftMs > 0 ? formatTime(leftMs / 1000 / 60) : '0:00';
-
                     const entryDiv = document.createElement('div');
                     entryDiv.className = 'entry';
                     entryDiv.innerHTML = `
@@ -186,9 +179,7 @@
                 return;
             }
 
-            // Save last name to localStorage
             localStorage.setItem('lastName', name);
-
             errorDiv.textContent = '';
 
             const now = new Date();
@@ -204,7 +195,7 @@
                 const result = await response.json();
                 console.log('Response:', result);
                 if (response.ok) {
-                    document.getElementById('name').value = name; // Keep name for next entry
+                    document.getElementById('name').value = name;
                     document.getElementById('hours').value = '';
                     await loadEntries();
                 } else {
@@ -233,9 +224,8 @@
             }
         }
 
-        // Load entries on page load
         loadEntries();
-        setInterval(loadEntries, 60000); // Refresh every minute to update timers
+        setInterval(loadEntries, 60000);
     </script>
 </body>
 </html>
