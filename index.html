@@ -19,24 +19,21 @@
         }
         form {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
-        }
-        .form-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
         input {
             margin-right: 10px;
+            margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
+            text-align: center;
+            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -94,6 +91,16 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em; /* Adjusted to fit on one line */
+            }
+            form {
+                flex-direction: column;
+            }
+            input, button {
+                width: 80%; /* Centered on page */
+                margin: 5px auto; /* Stacked and centered */
+            }
             table {
                 border: 0;
             }
@@ -129,13 +136,18 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                border-bottom: 1px dotted #555;
                 padding-left: 50%;
             }
             td[data-label="Time Left"] .time-value {
                 flex: 1;
+                text-align: right;
             }
             td[data-label="Time Left"] .delete-btn {
                 margin-left: 10px;
+            }
+            td[data-label=""] {
+                display: none; /* Hide original delete td since moved */
             }
         }
     </style>
@@ -143,10 +155,8 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <div class="form-row">
-            <input id="name" placeholder="Name" required>
-            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
-        </div>
+        <input id="name" placeholder="Name" required>
+        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
         <button type="submit">Submit</button>
     </form>
     <div class="table-container">
@@ -245,8 +255,8 @@
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
                     <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left"><span class="time-value">${left}</span></td>
-                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label="Time Left"><span class="time-value">${left}</span> <button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label=""></td> 
                 `;
                 tbody.appendChild(row);
             });
