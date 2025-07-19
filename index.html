@@ -19,16 +19,10 @@
         }
         form {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .input-row {
-            display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
         }
         input {
             margin-right: 10px;
@@ -70,7 +64,6 @@
             border: 1px solid #555;
             padding: 8px;
             text-align: center;
-            min-height: 40px; /* Minimum row height */
         }
         th {
             background-color: #444;
@@ -98,6 +91,19 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
+            form {
+                justify-content: space-between;
+            }
+            input[id="name"], input[id="hours"] {
+                flex: 1;
+                margin-right: 5px;
+                text-align: left; /* Centered left meaning left-aligned text? */
+            }
+            button {
+                flex: 1;
+                max-width: 150px;
+                text-align: center;
+            }
             table {
                 border: 0;
             }
@@ -105,55 +111,56 @@
                 display: none;
             }
             tr {
-                margin-bottom: 10px; /* Reduced margin for tighter spacing */
+                margin-bottom: 10px;
                 display: block;
                 border: 1px solid #555;
-                padding: 5px; /* Reduced padding for squished height */
+                padding: 5px;
                 background-color: #333;
                 position: relative;
-                min-height: 100px; /* Minimum card height for multiple entries visibility */
             }
             td {
                 border: none;
                 display: block;
-                text-align: right;
-                font-size: 12px; /* Slightly smaller font for compactness */
-                border-bottom: 1px dotted #555;
+                text-align: center;
+                font-size: 12px;
                 position: relative;
-                padding: 2px 0 2px 40%; /* Minimal vertical padding */
-                line-height: 1.2; /* Reduced line height for squishing */
+                padding: 2px 0;
+                line-height: 1.2;
             }
             td:before {
                 content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 33%;
-                padding-left: 10px; /* Reduced padding */
-                font-weight: bold;
-                text-align: left;
-            }
-            td:last-child {
-                border-bottom: 0;
+                display: block;
+                width: 100%;
+                font-size: 0.9em;
+                font-weight: normal;
+                text-align: center;
+                margin-bottom: 2px;
             }
             td[data-label="Name"] {
                 text-align: center;
-                padding-left: 0;
-                padding-top: 0;
-                padding-bottom: 5px; /* Minimal bottom padding */
-                font-size: 1.2em; /* Slightly smaller than before for fit */
+                padding: 5px 0;
+                font-size: 1.2em;
                 font-weight: bold;
-                border-bottom: none;
             }
             td[data-label="Name"]:before {
                 display: none;
             }
+            td[data-label="Start"], td[data-label="End"] {
+                width: 100%;
+                text-align: center;
+            }
             td[data-label="Time Left"] {
+                font-size: 1.4em;
                 font-weight: bold;
+                text-align: center;
+            }
+            td[data-label="Time Left"]:before {
+                display: none; /* Remove label for Time Left as per sketch focus on value */
             }
             td[data-label=""] {
                 position: absolute;
-                top: 5px; /* Moved closer to top */
-                right: 5px; /* Moved closer to edge */
+                top: 5px;
+                right: 5px;
                 padding: 0;
                 border: none;
                 background: none;
@@ -165,10 +172,8 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <div class="input-row">
-            <input id="name" placeholder="Name" required>
-            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
-        </div>
+        <input id="name" placeholder="Name" required>
+        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
         <button type="submit" id="submitBtn" disabled>Submit</button>
     </form>
     <div class="table-container">
@@ -232,15 +237,15 @@
                 const params = `?action=delete&start=${encodeURIComponent(start)}`;
                 fetch(scriptURL + params)
                     .then(response => response.json())
-                    .then(data => {
-                        currentData = data;
-                        renderTable();
-                        loadData(); // Immediate refresh after delete
-                    })
-                    .catch(error => {
-                        console.error('Delete error:', error);
-                        alert('Error deleting entry. Check console for details.');
-                    });
+                .then(data => {
+                    currentData = data;
+                    renderTable();
+                    loadData(); // Immediate refresh after delete
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    alert('Error deleting entry. Check console for details.');
+                });
             }
         }
 
