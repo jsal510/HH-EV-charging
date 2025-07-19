@@ -14,9 +14,9 @@
         h1 {
             font-weight: bold;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px; /* Reduced vertical space */
             color: #fff;
-            font-size: 1.5em; /* Reduced to fit on one line */
+            font-size: 1.2em; /* Smaller to fit on one line */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -24,13 +24,19 @@
         form {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            align-items: stretch;
+            margin-bottom: 10px; /* Condensed */
+            flex-wrap: nowrap;
+        }
+        .inputs-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 2;
+            margin-right: 10px;
         }
         input {
-            margin-right: 10px;
-            padding: 8px;
+            margin-bottom: 5px; /* Stacked with minimal space */
+            padding: 6px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
@@ -39,20 +45,20 @@
             min-width: 100px;
         }
         button {
-            background-color: #7BAFD4; /* North Carolina Blue */
+            background-color: #7BAFD4;
             color: #fff;
             border: none;
-            padding: 8px 20px;
+            padding: 6px 15px;
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
-            margin-left: 10px;
+            flex: 1;
         }
         button:hover {
-            background-color: #4B9CD3; /* Darker NC Blue */
+            background-color: #4B9CD3;
         }
         button:active {
-            background-color: #13294B; /* Navy */
+            background-color: #13294B;
         }
         .table-container {
             overflow-x: auto;
@@ -66,7 +72,7 @@
         }
         th, td {
             border: 1px solid #555;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
         }
         th {
@@ -95,20 +101,18 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.2em; /* Further reduced for mobile to ensure one line */
-            }
             form {
                 flex-wrap: nowrap;
             }
-            input {
-                flex: 1;
+            .inputs-wrapper {
+                flex: 2;
                 margin-right: 5px;
+            }
+            input {
+                margin-bottom: 5px;
             }
             button {
                 flex: 1;
-                max-width: 120px;
-                margin-left: 0;
             }
             table {
                 border: 0;
@@ -117,10 +121,10 @@
                 display: none;
             }
             tr {
-                margin-bottom: 10px;
+                margin-bottom: 5px;
                 display: block;
                 border: 1px solid #555;
-                padding: 5px;
+                padding: 3px;
                 background-color: #333;
                 position: relative;
             }
@@ -131,8 +135,8 @@
                 justify-content: center;
                 font-size: 12px;
                 position: relative;
-                padding: 2px 0;
-                line-height: 1.2;
+                padding: 1px 0;
+                line-height: 1.1;
                 text-align: center;
             }
             td:before {
@@ -154,8 +158,8 @@
             }
             td[data-label="Name"] {
                 justify-content: center;
-                padding: 5px 0;
-                font-size: 1.2em;
+                padding: 3px 0;
+                font-size: 1.1em;
                 font-weight: bold;
             }
             td[data-label="Name"]:before {
@@ -165,13 +169,13 @@
                 flex: none;
             }
             td[data-label="Time Left"] .value {
-                font-size: 1.4em;
+                font-size: 1.5em;
                 font-weight: bold;
             }
             td[data-label=""] {
                 position: absolute;
-                top: 5px;
-                right: 5px;
+                top: 3px;
+                right: 3px;
                 padding: 0;
                 border: none;
                 background: none;
@@ -184,8 +188,10 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <input id="name" placeholder="Name" required>
-        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        <div class="inputs-wrapper">
+            <input id="name" placeholder="Name" required>
+            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        </div>
         <button type="submit" id="submitBtn" disabled>Submit</button>
     </form>
     <div class="table-container">
@@ -196,7 +202,7 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
-                    <th></th> <!-- Empty header for delete column -->
+                    <th></th> /* Empty header for delete column */
                 </tr>
             </thead>
             <tbody></tbody>
