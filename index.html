@@ -16,7 +16,6 @@
             text-align: center;
             margin-bottom: 20px;
             color: #fff;
-            font-size: 1.5em; /* Adjusted to fit on one line */
         }
         form {
             display: flex;
@@ -92,11 +91,13 @@
         .delete-btn:hover {
             background-color: #333;
         }
-        td[data-label="Time Left"] {
-            font-size: 1.2em;
-            font-weight: bold;
+        .active-row {
+            border: 2px solid green;
         }
         @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
             table {
                 border: 0;
             }
@@ -127,6 +128,9 @@
             }
             td:last-child {
                 border-bottom: 0;
+            }
+            .active-row {
+                border: 2px solid green;
             }
         }
     </style>
@@ -196,14 +200,14 @@
                 const params = `?action=delete&start=${encodeURIComponent(start)}`;
                 fetch(scriptURL + params)
                     .then(response => response.json())
-                .then(data => {
-                    currentData = data;
-                    renderTable();
-                })
-                .catch(error => {
-                    console.error('Delete error:', error);
-                    alert('Error deleting entry. Check console for details.');
-                });
+                    .then(data => {
+                        currentData = data;
+                        renderTable();
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        alert('Error deleting entry. Check console for details.');
+                    });
             }
         }
 
@@ -216,10 +220,13 @@
                 const endDate = new Date(entry.End);
                 let remainingMs = endDate - now;
                 let left = 'Session Ended';
+                let rowClass = '';
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}`;
+                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
+                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
+                    rowClass = 'active-row';
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
@@ -230,6 +237,7 @@
                 const formattedEnd = `<span style="font-size: 0.67em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
                 
                 const row = document.createElement('tr');
+                row.className = rowClass;
                 row.innerHTML = `
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
