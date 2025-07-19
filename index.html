@@ -19,10 +19,16 @@
         }
         form {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
+        }
+        .input-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 10px;
         }
         input {
             margin-right: 10px;
@@ -64,6 +70,7 @@
             border: 1px solid #555;
             padding: 8px;
             text-align: center;
+            min-height: 40px; /* Minimum row height */
         }
         th {
             background-color: #444;
@@ -98,41 +105,59 @@
                 display: none;
             }
             tr {
-                margin-bottom: 20px;
+                margin-bottom: 10px; /* Reduced margin for tighter spacing */
                 display: block;
                 border: 1px solid #555;
-                padding: 10px;
+                padding: 5px; /* Reduced padding for squished height */
                 background-color: #333;
                 position: relative;
+                min-height: 100px; /* Minimum card height for multiple entries visibility */
             }
             td {
                 border: none;
                 display: block;
-                text-align: center;
-                font-size: 13px;
+                text-align: right;
+                font-size: 12px; /* Slightly smaller font for compactness */
+                border-bottom: 1px dotted #555;
                 position: relative;
+                padding: 2px 0 2px 40%; /* Minimal vertical padding */
+                line-height: 1.2; /* Reduced line height for squishing */
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 33%;
+                padding-left: 10px; /* Reduced padding */
+                font-weight: bold;
+                text-align: left;
+            }
+            td:last-child {
+                border-bottom: 0;
             }
             td[data-label="Name"] {
-                font-size: 1.5em;
+                text-align: center;
+                padding-left: 0;
+                padding-top: 0;
+                padding-bottom: 5px; /* Minimal bottom padding */
+                font-size: 1.2em; /* Slightly smaller than before for fit */
                 font-weight: bold;
-                margin-bottom: 10px;
+                border-bottom: none;
             }
-            td[data-label="Start"],
-            td[data-label="End"] {
-                font-size: 1em;
-                margin-bottom: 5px;
+            td[data-label="Name"]:before {
+                display: none;
             }
             td[data-label="Time Left"] {
-                font-size: 1.2em;
-                margin-bottom: 10px;
+                font-weight: bold;
             }
             td[data-label=""] {
                 position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-            td:before {
-                display: none; /* Remove labels for cleaner look matching sketch */
+                top: 5px; /* Moved closer to top */
+                right: 5px; /* Moved closer to edge */
+                padding: 0;
+                border: none;
+                background: none;
+                text-align: center;
             }
         }
     </style>
@@ -140,9 +165,11 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <input id="name" placeholder="Name" required>
-        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
-        <button type="submit">Submit</button>
+        <div class="input-row">
+            <input id="name" placeholder="Name" required>
+            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        </div>
+        <button type="submit" id="submitBtn" disabled>Submit</button>
     </form>
     <div class="table-container">
         <table id="statusTable">
@@ -169,9 +196,11 @@
                 .then(data => {
                     currentData = data;
                     renderTable();
+                    document.getElementById('submitBtn').disabled = false; // Enable submit after load
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);
+                    document.getElementById('submitBtn').disabled = false; // Enable even on error
                 });
         }
 
@@ -190,6 +219,7 @@
                     currentData = data;
                     renderTable();
                     document.getElementById('hours').value = '';
+                    loadData(); // Immediate refresh after submit
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
@@ -205,6 +235,7 @@
                     .then(data => {
                         currentData = data;
                         renderTable();
+                        loadData(); // Immediate refresh after delete
                     })
                     .catch(error => {
                         console.error('Delete error:', error);
@@ -257,8 +288,8 @@
         // Initial load
         loadData();
 
-        // Auto-refresh data and update "Time Left" every 10 seconds
-        setInterval(loadData, 10000);
+        // Auto-refresh data every 30 seconds
+        setInterval(loadData, 30000);
     </script>
 </body>
 </html>
