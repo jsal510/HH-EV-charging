@@ -1,100 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>EV Charging Status</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700" rel="stylesheet" />
   <style>
     body {
-      background: #222;
+      background: #202020;
       color: #fff;
       font-family: 'Orbitron', Arial, sans-serif;
+      text-align: center;
     }
     h1 {
-      text-align: center;
-      font-family: 'Orbitron', Arial, sans-serif;
-      font-size: 2.8rem;
-      font-weight: 700;
-      margin: 40px 0 25px 0;
+      font-size: 3rem;
+      margin: 30px 0 30px 0;
+      letter-spacing: 2px;
     }
-    .form-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 36px;
-      gap: 18px;
+    .car-emoji {
+      font-size: 2.3rem;
+      vertical-align: middle;
+      margin-right: 8px;
     }
-    label {
-      font-size: 1.25rem;
+    form {
+      margin-bottom: 30px;
+      font-size: 1.6rem;
     }
-    input[type="text"], input[type="number"] {
-      font-size: 1.25rem;
-      padding: 8px 14px;
-      border-radius: 5px;
-      border: 1px solid #444;
-      width: 220px;
-      font-family: 'Orbitron', Arial, sans-serif;
-      background: #eee;
-      color: #222;
-    }
-    button, input[type="submit"] {
+    input, button {
       font-family: 'Orbitron', Arial, sans-serif;
       font-size: 1.2rem;
-      padding: 7px 26px;
-      border-radius: 7px;
-      background: #fff;
-      color: #222;
-      font-weight: bold;
-      border: 1.5px solid #fff;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    button.delete-btn {
-      background: #b00000;
-      color: #fff;
+      padding: 7px 10px;
+      margin: 10px 8px;
+      border-radius: 6px;
       border: none;
-      padding: 7px 20px;
+      outline: none;
+    }
+    button {
+      background: #fff;
+      color: #202020;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #ff4444;
+      color: #fff;
     }
     table {
       margin: 0 auto;
-      width: 90%;
+      min-width: 90%;
       border-collapse: collapse;
-      background: #19191a;
-      box-shadow: 0 2px 10px #1115;
-      font-size: 1.25rem;
+      font-size: 2rem;
     }
     th, td {
-      padding: 16px 6px;
+      padding: 18px 15px;
       text-align: center;
-      border-bottom: 1px solid #333;
     }
     th {
       background: #111;
       color: #fff;
-      font-size: 1.28rem;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+    tr {
+      background: #2a2a2a;
+      transition: background 0.3s;
+    }
+    tr:nth-child(even) {
+      background: #242424;
+    }
+    .delete-btn {
+      background: #b20000;
+      color: #fff;
+      padding: 10px 25px;
+      border-radius: 7px;
+      border: none;
+      font-size: 1.5rem;
+      font-family: 'Orbitron', Arial, sans-serif;
+      cursor: pointer;
       font-weight: 700;
+      transition: background 0.2s;
     }
-    tr:nth-child(even) td {
-      background: #232325;
-    }
-    tr:hover td {
-      background: #343439;
+    .delete-btn:hover {
+      background: #ff4444;
     }
   </style>
 </head>
 <body>
-  <h1>EV Charging Status</h1>
-  <form id="charge-form" autocomplete="off">
-    <div class="form-row">
-      <label for="name">Name:</label>
-      <input id="name" type="text" required>
-      <label for="hours">Hours:</label>
-      <input id="hours" type="number" min="0.1" step="0.1" required>
-      <input type="submit" value="Submit">
-    </div>
+  <h1><span class="car-emoji">🚗</span>EV Charging Status</h1>
+  <form id="chargeForm">
+    <label>Name: <input id="name" required /></label>
+    <label>Hours: <input id="hours" type="number" step="0.1" min="0" required /></label>
+    <button type="submit">Submit</button>
   </form>
-
-  <table id="charge-table">
+  <table>
     <thead>
       <tr>
         <th>Name</th>
@@ -104,132 +102,127 @@
         <th>Delete</th>
       </tr>
     </thead>
-    <tbody>
-      <!-- data rows go here -->
-    </tbody>
+    <tbody id="chargeTable"></tbody>
   </table>
-
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
+    // ====== CONFIG ======
+    const API_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
+    // ====================
 
-    // Parse ISO date or return "--"
-    function formatDate(iso) {
-      if (!iso) return "--";
-      let d = new Date(iso);
-      if (isNaN(d.getTime())) return "--";
-      // "7/19 09:14"
-      return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+    let interval;
+
+    function fetchTable() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(updateTable)
+        .catch(() => updateTable([]));
+    }
+
+    function updateTable(rows) {
+      const tbody = document.getElementById('chargeTable');
+      tbody.innerHTML = '';
+      clearInterval(interval);
+
+      if (!rows.length) return;
+
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+
+        // Use Date.parse to ensure valid date
+        let startDate = row.start ? new Date(row.start) : null;
+        let endDate = row.end ? new Date(row.end) : null;
+        let validStart = startDate && !isNaN(startDate);
+        let validEnd = endDate && !isNaN(endDate);
+
+        function formatDate(d) {
+          if (!d || isNaN(d)) return "";
+          // Show local time
+          return d.toLocaleString();
+        }
+
+        // Time left
+        let leftCell = document.createElement('td');
+        if (validEnd) {
+          leftCell.textContent = formatTimeLeft(endDate - new Date());
+        } else {
+          leftCell.textContent = '';
+        }
+
+        // Delete button
+        const deleteCell = document.createElement('td');
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => {
+          if (confirm("Delete this entry?")) {
+            fetch(API_URL, {
+              method: "DELETE",
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({ name: row.name })
+            }).then(fetchTable);
+          }
+        };
+        deleteCell.appendChild(delBtn);
+
+        tr.innerHTML = `
+          <td>${row.name || ""}</td>
+          <td>${validStart ? formatDate(startDate) : ""}</td>
+          <td>${validEnd ? formatDate(endDate) : ""}</td>
+        `;
+        tr.appendChild(leftCell);
+        tr.appendChild(deleteCell);
+        tbody.appendChild(tr);
+      });
+
+      // Live update "Time Left"
+      interval = setInterval(() => {
+        Array.from(tbody.children).forEach((tr, i) => {
+          let row = rows[i];
+          let endDate = row.end ? new Date(row.end) : null;
+          let cell = tr.children[3];
+          if (endDate && !isNaN(endDate)) {
+            cell.textContent = formatTimeLeft(endDate - new Date());
+          } else {
+            cell.textContent = '';
+          }
+        });
+      }, 1000);
     }
 
     function formatTimeLeft(ms) {
-      if (ms <= 0) return "Done";
-      let sec = Math.floor(ms / 1000);
-      let h = Math.floor(sec / 3600);
-      let m = Math.floor((sec % 3600) / 60);
-      let s = sec % 60;
-      return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+      if (ms <= 0) return "Expired";
+      let s = Math.floor(ms / 1000);
+      let h = Math.floor(s / 3600); s %= 3600;
+      let m = Math.floor(s / 60); s %= 60;
+      let out = [];
+      if (h) out.push(h + "h");
+      if (m) out.push(m + "m");
+      out.push(s + "s");
+      return out.join(" ");
     }
 
-    function buildTable(data) {
-      const tbody = document.querySelector("#charge-table tbody");
-      tbody.innerHTML = "";
-
-      // sort by end time (soonest first)
-      data.sort((a,b) => new Date(a.end) - new Date(b.end));
-
-      data.forEach(row => {
-        let tr = document.createElement("tr");
-        // Name
-        let tdName = document.createElement("td");
-        tdName.textContent = row.name;
-        tr.appendChild(tdName);
-
-        // Start
-        let tdStart = document.createElement("td");
-        tdStart.textContent = formatDate(row.start);
-        tr.appendChild(tdStart);
-
-        // End
-        let tdEnd = document.createElement("td");
-        tdEnd.textContent = formatDate(row.end);
-        tr.appendChild(tdEnd);
-
-        // Left (live countdown)
-        let tdLeft = document.createElement("td");
-        tdLeft.className = "left-count";
-        tdLeft.setAttribute('data-end', row.end);
-        tr.appendChild(tdLeft);
-
-        // Delete
-        let tdDel = document.createElement("td");
-        let btn = document.createElement("button");
-        btn.className = "delete-btn";
-        btn.textContent = "Delete";
-        btn.onclick = () => deleteRow(row.name, row.start);
-        tdDel.appendChild(btn);
-        tr.appendChild(tdDel);
-
-        tbody.appendChild(tr);
-      });
-      updateCountdowns();
-    }
-
-    function updateCountdowns() {
-      const now = Date.now();
-      document.querySelectorAll(".left-count").forEach(td => {
-        const endIso = td.getAttribute('data-end');
-        let end = Date.parse(endIso);
-        if (!isNaN(end)) {
-          td.textContent = formatTimeLeft(end - now);
-        } else {
-          td.textContent = "--";
-        }
-      });
-    }
-    setInterval(updateCountdowns, 1000);
-
-    // Load table from backend
-    async function loadTable() {
-      let res = await fetch(API_URL);
-      let data = await res.json();
-      // Data may be in raw array form, convert if so:
-      if (Array.isArray(data) && Array.isArray(data[0])) {
-        // First row is header, skip it
-        let headers = data[0].map(h => h.toLowerCase());
-        data = data.slice(1).map(row =>
-          Object.fromEntries(row.map((v,i) => [headers[i], v]))
-        );
-      }
-      buildTable(data);
-    }
-
-    // Add entry
-    document.getElementById('charge-form').onsubmit = async function(e) {
+    // ===== SUBMIT FORM =====
+    document.getElementById('chargeForm').onsubmit = function(e) {
       e.preventDefault();
-      let name = document.getElementById("name").value.trim();
-      let hours = parseFloat(document.getElementById("hours").value);
-      if (!name || isNaN(hours)) return alert("Enter valid name and hours.");
-      let params = new URLSearchParams({ name, hours });
-      let res = await fetch(API_URL, { method: "POST", body: params });
-      await loadTable();
-      document.getElementById("name").value = "";
-      document.getElementById("hours").value = "";
+      const name = document.getElementById('name').value.trim();
+      const hours = document.getElementById('hours').value.trim();
+      if (!name || isNaN(Number(hours)) || Number(hours) <= 0) {
+        alert("Please enter a valid name and positive number of hours.");
+        return;
+      }
+      fetch(API_URL, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ name, hours })
+      }).then(() => {
+        fetchTable();
+        document.getElementById('chargeForm').reset();
+      });
     };
 
-    // Delete by name + start time
-    async function deleteRow(name, start) {
-      if (!confirm("Delete this row?")) return;
-      let payload = JSON.stringify({ name, start });
-      await fetch(API_URL, {
-        method: "DELETE",
-        body: payload,
-        headers: { "Content-Type": "application/json" }
-      });
-      loadTable();
-    }
-
-    // Initial load
-    loadTable();
+    // Initial fetch
+    fetchTable();
+    setInterval(fetchTable, 60000); // Poll for new data every minute
   </script>
 </body>
 </html>
