@@ -1,84 +1,55 @@
 <!-- Full INDEX.HTML - paste into GITHUB -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EV Charging Status</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f6f6f6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background-color: #f4f4f4;
     }
-
     .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 90%;
       max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 2em;
+      border-radius: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
-    h1 {
-      margin-bottom: 1.5rem;
+    h2 {
+      text-align: center;
     }
-
-    input {
-      width: 90%;
-      padding: 0.6rem;
-      margin: 0.5rem 0;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
     }
-
-    button {
-      padding: 0.7rem 2rem;
-      margin-top: 1rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background-color: #333;
-      color: white;
-      cursor: pointer;
-    }
-
     table {
       width: 100%;
-      margin-top: 2rem;
       border-collapse: collapse;
+      margin-top: 1em;
     }
-
     th, td {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      font-size: 0.95rem;
+      padding: 0.5em;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
     }
-
-    .delete {
-      cursor: pointer;
+    button.delete {
       color: red;
-      font-weight: bold;
-    }
-
-    .delete:hover {
-      color: darkred;
+      cursor: pointer;
+      border: none;
+      background: transparent;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>EV Charging Status</h1>
-    <input type="text" id="name" placeholder="Your Name" />
-    <input type="number" id="hours" placeholder="Charging Time (hours)" />
+    <h2>EV Charging Status</h2>
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="number" id="hours" placeholder="Charging Time (hours)">
     <button onclick="submitData()">Submit</button>
-
     <table id="dataTable">
       <thead>
         <tr>
@@ -89,62 +60,70 @@
           <th></th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="dataBody"></tbody>
     </table>
   </div>
 
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
 
-    async function fetchData() {
-      const res = await fetch(scriptURL);
-      const data = await res.json();
-      const table = document.querySelector('#dataTable tbody');
-      table.innerHTML = '';
-
-      data.forEach((row, index) => {
-        if (!row.name) return;  // Skip blank rows
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${row.name}</td>
-          <td>${row.start || '-'}</td>
-          <td>${row.end || '-'}</td>
-          <td>${row.left || 'Done'}</td>
-          <td><span class="delete" onclick="deleteRow(${index})">✘</span></td>
-        `;
-        table.appendChild(tr);
-      });
+    function fetchData() {
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const tableBody = document.getElementById('dataBody');
+          tableBody.innerHTML = '';
+          data.forEach((row, index) => {
+            if (!row.Name || !row.Start || !row.End) return; // Skip invalid rows
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${row.Name}</td>
+              <td>${row.Start}</td>
+              <td>${row.End}</td>
+              <td>${row.Left}</td>
+              <td><button class="delete" onclick="deleteRow(${index + 2})">❌</button></td>
+            `;
+            tableBody.appendChild(tr);
+          });
+        });
     }
 
-    async function submitData() {
-      const name = document.getElementById('name').value.trim();
-      const hours = document.getElementById('hours').value.trim();
+    function submitData() {
+      const name = document.getElementById('name').value;
+      const hours = document.getElementById('hours').value;
 
-      if (!name || !hours) return alert("Both fields required.");
+      if (!name || !hours) {
+        alert('Please enter name and charging time.');
+        return;
+      }
 
-      await fetch(scriptURL, {
+      fetch(scriptURL, {
         method: 'POST',
         body: new URLSearchParams({ name, hours })
-      });
-
-      document.getElementById('name').value = '';
-      document.getElementById('hours').value = '';
-      await fetchData();
+      })
+      .then(res => res.text())
+      .then(response => {
+        console.log('Success!', response);
+        fetchData();
+      })
+      .catch(error => console.error('Error!', error.message));
     }
 
-    async function deleteRow(index) {
-      const res = await fetch(scriptURL, {
-        method: 'POST',
-        body: new URLSearchParams({ deleteIndex: index })
+    function deleteRow(row) {
+      fetch(scriptURL + '?row=' + row, {
+        method: 'DELETE'
+      })
+      .then(res => res.text())
+      .then(result => {
+        if (result === 'Success') {
+          fetchData();
+        } else {
+          alert('Delete failed');
+        }
       });
-
-      const result = await res.text();
-      if (result !== 'Success') alert("Delete failed");
-      await fetchData();
     }
 
-    fetchData();
+    window.onload = fetchData;
   </script>
 </body>
 </html>
