@@ -16,6 +16,10 @@
             text-align: center;
             margin-bottom: 20px;
             color: #fff;
+            font-size: 1.5em; /* Reduced to fit on one line */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         form {
             display: flex;
@@ -25,23 +29,24 @@
             flex-wrap: wrap;
         }
         input {
-            margin-right: 5px;
-            padding: 6px;
+            margin-right: 10px;
+            padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
             text-align: center;
-            min-width: 80px;
+            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
             color: #fff;
             border: none;
-            padding: 6px 15px;
+            padding: 8px 20px;
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
+            margin-left: 10px;
         }
         button:hover {
             background-color: #4B9CD3; /* Darker NC Blue */
@@ -61,9 +66,8 @@
         }
         th, td {
             border: 1px solid #555;
-            padding: 6px;
+            padding: 8px;
             text-align: center;
-            min-height: 30px;
         }
         th {
             background-color: #444;
@@ -80,30 +84,31 @@
             border: none;
             padding: 0;
             cursor: pointer;
-            width: 18px;
-            height: 18px;
-            line-height: 18px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
             display: inline-block;
             text-align: center;
-            font-size: 14px;
+            font-size: 16px;
         }
         .delete-btn:hover {
             background-color: #333;
         }
         @media (max-width: 600px) {
-            form {
-                justify-content: left;
-                align-items: stretch;
+            h1 {
+                font-size: 1.2em; /* Further reduced for mobile to ensure one line */
             }
-            input[id="name"], input[id="hours"] {
+            form {
+                flex-wrap: nowrap;
+            }
+            input {
                 flex: 1;
                 margin-right: 5px;
-                text-align: center;
             }
             button {
                 flex: 1;
                 max-width: 120px;
-                text-align: center;
+                margin-left: 0;
             }
             table {
                 border: 0;
@@ -112,10 +117,10 @@
                 display: none;
             }
             tr {
-                margin-bottom: 8px;
+                margin-bottom: 10px;
                 display: block;
                 border: 1px solid #555;
-                padding: 4px;
+                padding: 5px;
                 background-color: #333;
                 position: relative;
             }
@@ -123,10 +128,11 @@
                 border: none;
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 font-size: 12px;
                 position: relative;
-                padding: 1px 0;
-                line-height: 1.1;
+                padding: 2px 0;
+                line-height: 1.2;
                 text-align: center;
             }
             td:before {
@@ -135,15 +141,21 @@
                 text-align: center;
                 font-weight: normal;
                 font-size: 0.9em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             td .value {
                 flex: 2 0 67%;
                 text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             td[data-label="Name"] {
                 justify-content: center;
-                padding: 4px 0;
-                font-size: 1.1em;
+                padding: 5px 0;
+                font-size: 1.2em;
                 font-weight: bold;
             }
             td[data-label="Name"]:before {
@@ -153,16 +165,13 @@
                 flex: none;
             }
             td[data-label="Time Left"] .value {
-                font-size: 1.3em;
+                font-size: 1.4em;
                 font-weight: bold;
-            }
-            td[data-label="Time Left"]:before {
-                display: none; /* No label for Time Left to focus on value */
             }
             td[data-label=""] {
                 position: absolute;
-                top: 4px;
-                right: 4px;
+                top: 5px;
+                right: 5px;
                 padding: 0;
                 border: none;
                 background: none;
