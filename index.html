@@ -2,128 +2,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EV Charging Status</title>
   <style>
     body {
-      font-family: Orbitron, sans-serif;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
+      min-height: 100vh;
     }
     .container {
-      text-align: center;
       background: white;
-      padding: 2rem;
+      padding: 40px;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
     }
     input {
-      padding: 0.75rem;
-      margin: 0.5rem;
-      width: 90%;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
     }
     button {
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      background-color: #eee;
+      width: 100%;
+      padding: 10px;
+      background: #444;
+      color: white;
       border: none;
-      border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
+      margin-bottom: 20px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
     }
     th, td {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
+      text-align: center;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
     }
     .delete-btn {
       color: red;
-      cursor: pointer;
       font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>EV Charging Status</h2>
-    <input type="text" id="name" placeholder="Your Name">
-    <input type="number" id="hours" placeholder="Charging Time (hours)">
-    <button onclick="submitEntry()">Submit</button>
-    <table id="data-table">
+    <h1>EV Charging Status</h1>
+    <input id="name" placeholder="Your Name" />
+    <input id="hours" placeholder="Charging Time (hours)" />
+    <button onclick="submitForm()">Submit</button>
+    <table>
       <thead>
-        <tr><th>Name</th><th>Start</th><th>End</th><th>Left</th><th></th></tr>
+        <tr>
+          <th>Name</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Left</th>
+          <th></th>
+        </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="statusTable"></tbody>
     </table>
   </div>
 
   <script>
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
+    const scriptURL = 'YOUR_SCRIPT_DEPLOYMENT_URL_HERE';
 
-    async function fetchData() {
-      const response = await fetch(SHEET_URL);
-      const data = await response.json();
-      const tableBody = document.querySelector('#data-table tbody');
-      tableBody.innerHTML = '';
+    async function submitForm() {
+      const name = document.getElementById('name').value;
+      const hours = document.getElementById('hours').value;
+      if (!name || !hours) return alert("Fill out both fields.");
 
-      data.forEach((row, index) => {
-        if (!row.Name || !row.Start) return; // Skip incomplete rows
-
-        const tr = document.createElement('tr');
-        const start = new Date(row.Start);
-        const end = new Date(row.End);
-
-        const timeLeft = isNaN(end) || isNaN(start)
-          ? 'Done'
-          : Math.max(0, Math.floor((end - new Date()) / 60000)) + ' min';
-
-        tr.innerHTML = `
-          <td>${row.Name}</td>
-          <td>${isNaN(start) ? '-' : start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-          <td>${isNaN(end) ? '-' : end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-          <td>${timeLeft}</td>
-          <td><span class="delete-btn" onclick="deleteEntry(${index})">✘</span></td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    }
-
-    async function submitEntry() {
-      const name = document.getElementById('name').value.trim();
-      const hours = parseFloat(document.getElementById('hours').value);
-      if (!name || isNaN(hours)) return alert('Enter name and time');
-
-      const payload = { name, hours };
-      await fetch(SHEET_URL, {
+      await fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ name, hours }),
+        headers: { 'Content-Type': 'application/json' }
       });
-      await fetchData();
+      document.getElementById('name').value = '';
+      document.getElementById('hours').value = '';
+      loadTable();
     }
 
-    async function deleteEntry(index) {
-      const res = await fetch(SHEET_URL + '?delete=' + index);
-      const result = await res.text();
-      if (result.includes('OK')) {
-        await fetchData();
+    async function deleteRow(row) {
+      const res = await fetch(`${scriptURL}?row=${row}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        loadTable();
       } else {
-        alert('Delete failed');
+        alert("Delete failed");
       }
     }
 
-    fetchData();
-    setInterval(fetchData, 60000);
+    async function loadTable() {
+      const res = await fetch(scriptURL);
+      const data = await res.json();
+      const tbody = document.getElementById("statusTable");
+      tbody.innerHTML = "";
+
+      data.forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${entry.name}</td>
+          <td>${entry.start || "-"}</td>
+          <td>${entry.end || "-"}</td>
+          <td>${entry.left}</td>
+          <td><span class="delete-btn" onclick="deleteRow(${entry.row})">✗</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    loadTable();
   </script>
 </body>
 </html>
