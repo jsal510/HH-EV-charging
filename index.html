@@ -145,8 +145,7 @@
                 const now = new Date();
                 data.slice(1).forEach(entry => { // Skip header
                     const start = new Date(entry.Start);
-                    const hours = parseFloat(entry.Hours || 0);
-                    const end = new Date(start.getTime() + hours * 60 * 60 * 1000);
+                    const end = new Date(entry.End);
                     const leftMs = end - now;
                     const left = leftMs > 0 ? formatTime(leftMs / 1000 / 60) : '0:00';
 
@@ -194,7 +193,7 @@
 
             const now = new Date();
             const end = new Date(now.getTime() + hours * 60 * 60 * 1000);
-            const entry = { Name: name, Start: now.toISOString(), End: end.toISOString(), Hours: hours.toString(), Left: '' };
+            const entry = { Name: name, Start: now.toISOString(), End: end.toISOString() };
 
             try {
                 const response = await fetch('https://script.google.com/macros/s/AKfycbw6Zp1MyXQDHcvAoZgHsp97K2PRqTC3TuxZaoTmEDFcnD7QAa6RicipJ9K5VGHNr7HarQ/exec', {
