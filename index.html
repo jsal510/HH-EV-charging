@@ -123,8 +123,21 @@
                 font-weight: bold;
                 text-align: left;
             }
-            td:last-child {
-                border-bottom: 0;
+            td[data-label="Time Left"] {
+                display: flex;
+                align-items: center;
+                border-bottom: 1px dotted #555;
+                padding-left: 50%;
+            }
+            td[data-label="Time Left"] .time-value {
+                flex: 1;
+                text-align: right;
+            }
+            td[data-label="Time Left"] .delete-btn {
+                margin-left: 10px;
+            }
+            td[data-label=""] {
+                display: none; /* Hide original delete td */
             }
         }
     </style>
@@ -217,7 +230,7 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}`;
+                    left = `<b>${hoursLeft}:${minsLeft.toString().padStart(2, '0')}</b>`;
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
@@ -232,8 +245,8 @@
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
                     <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left">${left}</td>
-                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label="Time Left"><span class="time-value">${left}</span><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label=""></td>
                 `;
                 tbody.appendChild(row);
             });
