@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EV Charging Status</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #f8f8f8;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 1.5em;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    h1 {
+      font-size: 1.75rem;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75em;
+      margin: 0.5em 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #eee;
+      border: none;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5em;
+      text-align: center;
+    }
+    th:last-child {
+      width: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>EV Charging Status</h1>
+    <form id="charging-form">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="number" id="duration" placeholder="Charging Time (hours)" required />
+      <button type="submit">Submit</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Left</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="chargingTableBody"></tbody>
+    </table>
+  </div>
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
+    const form = document.getElementById("charging-form");
+    const nameInput = document.getElementById("name");
+    const durationInput = document.getElementById("duration");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = nameInput.value.trim();
+      const duration = parseFloat(durationInput.value.trim());
+
+      if (!name || isNaN(duration)) return;
+
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ name, duration }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      nameInput.value = "";
+      durationInput.value = "";
+    });
+  </script>
+</body>
+</html>
