@@ -1,228 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>EV Charging Status</title>
-  <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* GATE 1: Your locked design */
     body {
-      background: #202020;
+      font-family: Arial, sans-serif;
+      background: #111;
       color: #fff;
-      font-family: 'Orbitron', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #222;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.28);
+    }
+    h2 {
       text-align: center;
-    }
-    h1 {
-      font-size: 3rem;
-      margin: 30px 0 30px 0;
-      letter-spacing: 2px;
-    }
-    .car-emoji {
-      font-size: 2.3rem;
-      vertical-align: middle;
-      margin-right: 8px;
+      font-size: 2rem;
+      margin-bottom: 24px;
     }
     form {
-      margin-bottom: 30px;
-      font-size: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
     }
-    input, button {
-      font-family: 'Orbitron', Arial, sans-serif;
-      font-size: 1.2rem;
+    label {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    input, select, textarea, button {
+      font-size: 1rem;
       padding: 7px 10px;
-      margin: 10px 8px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: none;
       outline: none;
     }
     button {
-      background: #fff;
-      color: #202020;
+      background: #34b233;
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.18s;
     }
     button:hover {
-      background: #ff4444;
-      color: #fff;
+      background: #288126;
     }
-    table {
-      margin: 0 auto;
-      min-width: 90%;
-      border-collapse: collapse;
-      font-size: 2rem;
+    .entry-list {
+      margin-top: 12px;
     }
-    th, td {
-      padding: 18px 15px;
-      text-align: center;
+    .entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #191919;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
     }
-    th {
-      background: #111;
-      color: #fff;
-      font-size: 2rem;
-      letter-spacing: 1px;
+    .entry-details {
+      flex: 1;
     }
-    tr {
-      background: #2a2a2a;
-      transition: background 0.3s;
+    .entry strong {
+      display: inline-block;
+      min-width: 74px;
     }
-    tr:nth-child(even) {
-      background: #242424;
+    .entry-actions {
+      margin-left: 16px;
+      display: flex;
+      gap: 10px;
     }
     .delete-btn {
-      background: #b20000;
+      background: #b71c1c;
       color: #fff;
-      padding: 10px 25px;
-      border-radius: 7px;
       border: none;
-      font-size: 1.5rem;
-      font-family: 'Orbitron', Arial, sans-serif;
+      border-radius: 6px;
+      padding: 7px 13px;
       cursor: pointer;
-      font-weight: 700;
-      transition: background 0.2s;
+      font-weight: bold;
+      transition: background 0.18s;
     }
     .delete-btn:hover {
-      background: #ff4444;
+      background: #850000;
+    }
+    @media (max-width: 600px) {
+      .container { max-width: 98vw; padding: 8px; }
+      h2 { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
-  <h1><span class="car-emoji">🚗</span>EV Charging Status</h1>
-  <form id="chargeForm">
-    <label>Name: <input id="name" required /></label>
-    <label>Hours: <input id="hours" type="number" step="0.1" min="0" required /></label>
-    <button type="submit">Submit</button>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Left</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody id="chargeTable"></tbody>
-  </table>
+  <div class="container">
+    <h2>EV Charging Status</h2>
+    <form id="addForm">
+      <div>
+        <label for="startTime">Start Time</label>
+        <input type="datetime-local" id="startTime" required>
+      </div>
+      <div>
+        <label for="endTime">End Time</label>
+        <input type="datetime-local" id="endTime" required>
+      </div>
+      <div>
+        <label for="status">Status</label>
+        <select id="status" required>
+          <option value="">Select</option>
+          <option value="Charging">Charging</option>
+          <option value="Complete">Complete</option>
+          <option value="Error">Error</option>
+        </select>
+      </div>
+      <div>
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="2"></textarea>
+      </div>
+      <button type="submit">Add Entry</button>
+    </form>
+    <div class="entry-list" id="entryList">
+      <!-- Entries will be rendered here -->
+    </div>
+  </div>
   <script>
-    // ====== CONFIG ======
-    const API_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
-    // ====================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
 
-    let interval;
-
-    function fetchTable() {
-      fetch(API_URL)
-        .then(res => res.json())
-        .then(updateTable)
-        .catch(() => updateTable([]));
+    async function fetchEntries() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      renderEntries(data);
     }
 
-    function updateTable(rows) {
-      const tbody = document.getElementById('chargeTable');
-      tbody.innerHTML = '';
-      clearInterval(interval);
-
-      if (!rows.length) return;
-
-      rows.forEach(row => {
-        const tr = document.createElement('tr');
-
-        // Use Date.parse to ensure valid date
-        let startDate = row.start ? new Date(row.start) : null;
-        let endDate = row.end ? new Date(row.end) : null;
-        let validStart = startDate && !isNaN(startDate);
-        let validEnd = endDate && !isNaN(endDate);
-
-        function formatDate(d) {
-          if (!d || isNaN(d)) return "";
-          // Show local time
-          return d.toLocaleString();
-        }
-
-        // Time left
-        let leftCell = document.createElement('td');
-        if (validEnd) {
-          leftCell.textContent = formatTimeLeft(endDate - new Date());
-        } else {
-          leftCell.textContent = '';
-        }
-
-        // Delete button
-        const deleteCell = document.createElement('td');
-        const delBtn = document.createElement('button');
-        delBtn.className = 'delete-btn';
-        delBtn.textContent = "Delete";
-        delBtn.onclick = () => {
-          if (confirm("Delete this entry?")) {
-            fetch(API_URL, {
-              method: "DELETE",
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({ name: row.name })
-            }).then(fetchTable);
-          }
-        };
-        deleteCell.appendChild(delBtn);
-
-        tr.innerHTML = `
-          <td>${row.name || ""}</td>
-          <td>${validStart ? formatDate(startDate) : ""}</td>
-          <td>${validEnd ? formatDate(endDate) : ""}</td>
+    function renderEntries(entries) {
+      const list = document.getElementById('entryList');
+      list.innerHTML = '';
+      entries.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `
+          <div class="entry-details">
+            <div><strong>Start:</strong> ${entry['Start Time']}</div>
+            <div><strong>End:</strong> ${entry['End Time']}</div>
+            <div><strong>Status:</strong> ${entry['Status']}</div>
+            <div><strong>Notes:</strong> ${entry['Notes'] || ''}</div>
+          </div>
+          <div class="entry-actions">
+            <button class="delete-btn" onclick="deleteEntry('${entry['Start Time']}')">Delete</button>
+          </div>
         `;
-        tr.appendChild(leftCell);
-        tr.appendChild(deleteCell);
-        tbody.appendChild(tr);
+        list.appendChild(div);
       });
-
-      // Live update "Time Left"
-      interval = setInterval(() => {
-        Array.from(tbody.children).forEach((tr, i) => {
-          let row = rows[i];
-          let endDate = row.end ? new Date(row.end) : null;
-          let cell = tr.children[3];
-          if (endDate && !isNaN(endDate)) {
-            cell.textContent = formatTimeLeft(endDate - new Date());
-          } else {
-            cell.textContent = '';
-          }
-        });
-      }, 1000);
     }
 
-    function formatTimeLeft(ms) {
-      if (ms <= 0) return "Expired";
-      let s = Math.floor(ms / 1000);
-      let h = Math.floor(s / 3600); s %= 3600;
-      let m = Math.floor(s / 60); s %= 60;
-      let out = [];
-      if (h) out.push(h + "h");
-      if (m) out.push(m + "m");
-      out.push(s + "s");
-      return out.join(" ");
-    }
-
-    // ===== SUBMIT FORM =====
-    document.getElementById('chargeForm').onsubmit = function(e) {
+    document.getElementById('addForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const hours = document.getElementById('hours').value.trim();
-      if (!name || isNaN(Number(hours)) || Number(hours) <= 0) {
-        alert("Please enter a valid name and positive number of hours.");
-        return;
-      }
-      fetch(API_URL, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ name, hours })
-      }).then(() => {
-        fetchTable();
-        document.getElementById('chargeForm').reset();
+      const payload = {
+        'Start Time': document.getElementById('startTime').value,
+        'End Time': document.getElementById('endTime').value,
+        'Status': document.getElementById('status').value,
+        'Notes': document.getElementById('notes').value,
+      };
+      await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
       });
-    };
+      this.reset();
+      fetchEntries();
+    });
 
-    // Initial fetch
-    fetchTable();
-    setInterval(fetchTable, 60000); // Poll for new data every minute
+    async function deleteEntry(startTime) {
+      if (!confirm('Delete this entry?')) return;
+      await fetch(API_URL, {
+        method: 'DELETE',
+        body: JSON.stringify({ startTime }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      fetchEntries();
+    }
+
+    // Initial load
+    fetchEntries();
   </script>
 </body>
 </html>
