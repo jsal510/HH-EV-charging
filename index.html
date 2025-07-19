@@ -200,18 +200,6 @@
                     await loadEntries();
                 } else {
                     errorDiv.textContent = 'Error submitting entry: ' + (result.error || 'Unknown error');
-                    // Fallback to GET if POST fails
-                    const fallbackUrl = `https://script.google.com/macros/s/AKfycbw6Zp1MyXQDHcvAoZgHsp97K2PRqTC3TuxZaoTmEDFcnD7QAa6RicipJ9K5VGHNr7HarQ/exec?Name=${encodeURIComponent(name)}&Start=${encodeURIComponent(now.toISOString())}&End=${encodeURIComponent(end.toISOString())}`;
-                    const fallbackResponse = await fetch(fallbackUrl, { method: 'GET' });
-                    const fallbackResult = await fallbackResponse.json();
-                    if (fallbackResponse.ok) {
-                        document.getElementById('name').value = name;
-                        document.getElementById('hours').value = '';
-                        await loadEntries();
-                    } else {
-                        console.log('Fallback Response:', fallbackResult);
-                        errorDiv.textContent += ' (Fallback failed: ' + (fallbackResult.error || 'Unknown error') + ')';
-                    }
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
