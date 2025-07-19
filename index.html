@@ -19,33 +19,26 @@
         }
         form {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .input-row {
-            display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
         }
         input {
-            margin-right: 10px;
-            margin-bottom: 10px;
-            padding: 8px;
+            margin-right: 5px;
+            padding: 6px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
             text-align: center;
-            min-width: 100px;
+            min-width: 80px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
             color: #fff;
             border: none;
-            padding: 10px 20px;
+            padding: 6px 15px;
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
@@ -68,9 +61,9 @@
         }
         th, td {
             border: 1px solid #555;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            min-height: 40px; /* Minimum row height */
+            min-height: 30px;
         }
         th {
             background-color: #444;
@@ -87,17 +80,31 @@
             border: none;
             padding: 0;
             cursor: pointer;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
             display: inline-block;
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
         }
         .delete-btn:hover {
             background-color: #333;
         }
         @media (max-width: 600px) {
+            form {
+                justify-content: left;
+                align-items: stretch;
+            }
+            input[id="name"], input[id="hours"] {
+                flex: 1;
+                margin-right: 5px;
+                text-align: center;
+            }
+            button {
+                flex: 1;
+                max-width: 120px;
+                text-align: center;
+            }
             table {
                 border: 0;
             }
@@ -105,59 +112,62 @@
                 display: none;
             }
             tr {
-                margin-bottom: 5px; /* Reduced */
+                margin-bottom: 8px;
                 display: block;
                 border: 1px solid #555;
-                padding: 3px; /* Reduced */
+                padding: 4px;
                 background-color: #333;
                 position: relative;
-                min-height: auto;
             }
             td {
                 border: none;
-                display: block;
-                text-align: right;
-                font-size: 11px; /* Smaller for scrunch */
-                border-bottom: none; /* No lines */
+                display: flex;
+                align-items: center;
+                font-size: 12px;
                 position: relative;
-                padding: 0 0 0 40%; /* No vertical padding */
-                line-height: 1.0; /* Tighter */
+                padding: 1px 0;
+                line-height: 1.1;
+                text-align: center;
             }
             td:before {
                 content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 33%;
-                padding-left: 5px;
-                font-weight: bold;
-                text-align: left;
+                flex: 1 0 33%;
+                text-align: center;
+                font-weight: normal;
+                font-size: 0.9em;
             }
-            td:last-child {
-                border-bottom: 0;
+            td .value {
+                flex: 2 0 67%;
+                text-align: center;
             }
             td[data-label="Name"] {
-                text-align: center;
-                padding-left: 0;
-                padding-top: 0;
-                padding-bottom: 2px; /* Minimal */
+                justify-content: center;
+                padding: 4px 0;
                 font-size: 1.1em;
                 font-weight: bold;
-                border-bottom: none;
             }
             td[data-label="Name"]:before {
                 display: none;
             }
-            td[data-label="Time Left"] {
+            td[data-label="Name"] .value {
+                flex: none;
+            }
+            td[data-label="Time Left"] .value {
+                font-size: 1.3em;
                 font-weight: bold;
+            }
+            td[data-label="Time Left"]:before {
+                display: none; /* No label for Time Left to focus on value */
             }
             td[data-label=""] {
                 position: absolute;
-                top: 3px;
-                right: 3px;
+                top: 4px;
+                right: 4px;
                 padding: 0;
                 border: none;
                 background: none;
                 text-align: center;
+                display: block;
             }
         }
     </style>
@@ -165,10 +175,8 @@
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <div class="input-row">
-            <input id="name" placeholder="Name" required>
-            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
-        </div>
+        <input id="name" placeholder="Name" required>
+        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
         <button type="submit" id="submitBtn" disabled>Submit</button>
     </form>
     <div class="table-container">
