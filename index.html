@@ -3,6 +3,7 @@
 <head>
     <title>EV Charging Status</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Orbitron', sans-serif;
@@ -21,15 +22,18 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         input {
             margin-right: 10px;
+            margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
             text-align: center;
+            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -46,7 +50,12 @@
         button:active {
             background-color: #13294B; /* Navy */
         }
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
         table {
+            width: 100%;
             max-width: 800px;
             border-collapse: collapse;
             margin: 0 auto;
@@ -61,6 +70,9 @@
         }
         td {
             background-color: #333;
+        }
+        .time-left-header {
+            font-size: 0.8em;
         }
         .delete-btn {
             background-color: #000;
@@ -78,6 +90,39 @@
         .delete-btn:hover {
             background-color: #333;
         }
+        @media (max-width: 600px) {
+            table {
+                border: 0;
+            }
+            thead {
+                display: none;
+            }
+            tr {
+                margin-bottom: 10px;
+                display: block;
+                border: 1px solid #555;
+            }
+            td {
+                display: block;
+                text-align: right;
+                font-size: 13px;
+                border-bottom: 1px dotted #555;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 15px;
+                font-weight: bold;
+                text-align: left;
+            }
+            td:last-child {
+                border-bottom: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -87,18 +132,20 @@
         <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
         <button type="submit">Submit</button>
     </form>
-    <table id="statusTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Left</th>
-                <th></th> <!-- Empty header for delete column -->
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="table-container">
+        <table id="statusTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th class="time-left-header">Time Left</th>
+                    <th></th> <!-- Empty header for delete column -->
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
@@ -179,11 +226,11 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${entry.Name}</td>
-                    <td>${formattedStart}</td>
-                    <td>${formattedEnd}</td>
-                    <td>${left}</td>
-                    <td><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label="Name">${entry.Name}</td>
+                    <td data-label="Start">${formattedStart}</td>
+                    <td data-label="End">${formattedEnd}</td>
+                    <td data-label="Time Left">${left}</td>
+                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -198,8 +245,8 @@
         // Initial load
         loadData();
 
-        // Update "Left" dynamically every 5 seconds
-        setInterval(renderTable, 5000);
+        // Auto-refresh data and update "Time Left" every 10 seconds
+        setInterval(loadData, 10000);
     </script>
 </body>
 </html>
