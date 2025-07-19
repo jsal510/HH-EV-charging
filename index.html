@@ -19,21 +19,24 @@
         }
         form {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+        }
+        .form-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
         }
         input {
             margin-right: 10px;
-            margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
-            text-align: center;
-            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -91,17 +94,6 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em; /* Adjusted to fit on one line */
-            }
-            form {
-                flex-direction: column;
-            }
-            input, button {
-                width: 80%; /* Centered on page */
-                margin: 5px auto; /* Stacked and centered */
-                text-align: center;
-            }
             table {
                 border: 0;
             }
@@ -133,14 +125,28 @@
             td:last-child {
                 border-bottom: 0;
             }
+            td[data-label="Time Left"] {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-left: 50%;
+            }
+            td[data-label="Time Left"] .time-value {
+                flex: 1;
+            }
+            td[data-label="Time Left"] .delete-btn {
+                margin-left: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>EV Charging Status</h1>
     <form onsubmit="submitEntry(); return false;">
-        <input id="name" placeholder="Name" required>
-        <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        <div class="form-row">
+            <input id="name" placeholder="Name" required>
+            <input id="hours" type="number" min="0" step="0.1" placeholder="Hours" required>
+        </div>
         <button type="submit">Submit</button>
     </form>
     <div class="table-container">
@@ -200,15 +206,15 @@
             if (confirm('Are you sure you want to delete this entry?')) {
                 const params = `?action=delete&start=${encodeURIComponent(start)}`;
                 fetch(scriptURL + params)
-                .then(response => response.json())
-                .then(data => {
-                    currentData = data;
-                    renderTable();
-                })
-                .catch(error => {
-                    console.error('Delete error:', error);
-                    alert('Error deleting entry. Check console for details.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        currentData = data;
+                        renderTable();
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        alert('Error deleting entry. Check console for details.');
+                    });
             }
         }
 
@@ -224,8 +230,7 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
+                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}`;
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
@@ -240,7 +245,7 @@
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
                     <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left">${left}</td>
+                    <td data-label="Time Left"><span class="time-value">${left}</span></td>
                     <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
                 tbody.appendChild(row);
