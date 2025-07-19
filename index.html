@@ -16,10 +16,6 @@
             text-align: center;
             margin-bottom: 20px;
             color: #fff;
-            font-size: 1.5em; /* Adjusted to fit on one line */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         form {
             display: flex;
@@ -30,11 +26,14 @@
         }
         input {
             margin-right: 10px;
+            margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
+            text-align: center;
+            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -92,13 +91,6 @@
             background-color: #333;
         }
         @media (max-width: 600px) {
-            form {
-                flex-direction: column;
-            }
-            input, button {
-                width: 80%; /* Centered with fixed width */
-                margin: 5px 0; /* Stacked with minimal vertical space */
-            }
             table {
                 border: 0;
             }
@@ -225,7 +217,7 @@
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
                     const secsLeft = Math.floor((remainingMs % 60000) / 1000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
+                    left = `<b>${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}</b>`;
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
