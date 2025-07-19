@@ -53,6 +53,10 @@
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
             flex: 1;
+            min-height: 76px; /* Match stacked inputs height (2 inputs * 38px approx) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         button:hover {
             background-color: #4B9CD3;
@@ -142,19 +146,19 @@
             td:before {
                 content: attr(data-label);
                 flex: 1 0 33%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 text-align: center;
                 font-weight: normal;
                 font-size: 0.9em;
-                display: flex;
-                align-items: center;
-                justify-content: center;
             }
             td .value {
                 flex: 2 0 67%;
-                text-align: center;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                text-align: center;
             }
             td[data-label="Name"] {
                 justify-content: center;
@@ -268,51 +272,4 @@
         }
 
         function renderTable() {
-            const tbody = document.querySelector('#statusTable tbody');
-            tbody.innerHTML = '';
-            const now = new Date();
-            currentData.forEach(entry => {
-                const startDate = new Date(entry.Start);
-                const endDate = new Date(entry.End);
-                let remainingMs = endDate - now;
-                let left = 'Session Ended';
-                if (remainingMs > 0) {
-                    const hoursLeft = Math.floor(remainingMs / 3600000);
-                    const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
-                }
-                const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedStart = `<span style="font-size: 0.67em;">${dateStart}</span> - <b>${timeStart}</b>`;
-                
-                const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedEnd = `<span style="font-size: 0.67em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td data-label="Name">${entry.Name}</td>
-                    <td data-label="Start">${formattedStart}</td>
-                    <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left">${left}</td>
-                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Load last name from localStorage
-        const lastName = localStorage.getItem('lastName');
-        if (lastName) {
-            document.getElementById('name').value = lastName;
-        }
-
-        // Initial load
-        loadData();
-
-        // Auto-refresh data every 30 seconds
-        setInterval(loadData, 30000);
-    </script>
-</body>
-</html>
+            const tbody = document.querySelector('#statusTable tbody
