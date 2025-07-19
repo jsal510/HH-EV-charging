@@ -63,14 +63,19 @@
             background-color: #333;
         }
         .delete-btn {
-            background-color: #ff0000;
+            background-color: #000;
             color: #fff;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            display: inline-block;
+            text-align: center;
         }
         .delete-btn:hover {
-            background-color: #cc0000;
+            background-color: #333;
         }
     </style>
 </head>
@@ -88,7 +93,7 @@
                 <th>Start</th>
                 <th>End</th>
                 <th>Left</th>
-                <th>Action</th>
+                <th></th> <!-- Empty header for delete column -->
             </tr>
         </thead>
         <tbody></tbody>
@@ -163,8 +168,14 @@
                     const secsLeft = Math.floor((remainingMs % 60000) / 1000);
                     left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
                 }
-                const formattedStart = `${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' })}`;
-                const formattedEnd = `${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' })}`;
+                const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                const formattedStart = `<b>${timeStart}</b> - ${dateStart}`;
+                
+                const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                const formattedEnd = `<b>${timeEnd}</b> - ${dateEnd}`;
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${entry.Name}</td>
