@@ -1,192 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>EV Charging Status</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* GATE 1: Your locked design */
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #222;
-      border-radius: 18px;
-      box-shadow: 0 6px 32px rgba(0,0,0,0.28);
-    }
-    h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 24px;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    label {
-      font-size: 1rem;
-      margin-bottom: 4px;
-    }
-    input, select, textarea, button {
-      font-size: 1rem;
-      padding: 7px 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-    button {
-      background: #34b233;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.18s;
-    }
-    button:hover {
-      background: #288126;
-    }
-    .entry-list {
-      margin-top: 12px;
-    }
-    .entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #191919;
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-    }
-    .entry-details {
-      flex: 1;
-    }
-    .entry strong {
-      display: inline-block;
-      min-width: 74px;
-    }
-    .entry-actions {
-      margin-left: 16px;
-      display: flex;
-      gap: 10px;
-    }
-    .delete-btn {
-      background: #b71c1c;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 7px 13px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.18s;
-    }
-    .delete-btn:hover {
-      background: #850000;
-    }
-    @media (max-width: 600px) {
-      .container { max-width: 98vw; padding: 8px; }
-      h2 { font-size: 1.5rem; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charging Status</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1c2526;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            font-family: 'Orbitron', sans-serif;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100px;
+            padding: 10px;
+            font-size: 1.2em;
+            font-family: 'Orbitron', sans-serif;
+            background-color: #34b233;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2a922a;
+        }
+        .delete-btn {
+            background-color: #ff4444;
+            width: 70px;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        .entries {
+            width: 100%;
+            max-width: 600px;
+        }
+        .entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 70px;
+            padding: 10px 0;
+            border-bottom: 1px solid #555;
+        }
+        .entry div {
+            padding: 5px;
+        }
+        .error {
+            color: #ff5555;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .form-container {
+                flex-direction: column;
+            }
+            input, button {
+                font-size: 0.9em;
+            }
+            .entry {
+                grid-template-columns: 1fr 1fr 1fr 1fr 50px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>EV Charging Status</h2>
-    <form id="addForm">
-      <div>
-        <label for="startTime">Start Time</label>
-        <input type="datetime-local" id="startTime" required>
-      </div>
-      <div>
-        <label for="endTime">End Time</label>
-        <input type="datetime-local" id="endTime" required>
-      </div>
-      <div>
-        <label for="status">Status</label>
-        <select id="status" required>
-          <option value="">Select</option>
-          <option value="Charging">Charging</option>
-          <option value="Complete">Complete</option>
-          <option value="Error">Error</option>
-        </select>
-      </div>
-      <div>
-        <label for="notes">Notes</label>
-        <textarea id="notes" rows="2"></textarea>
-      </div>
-      <button type="submit">Add Entry</button>
-    </form>
-    <div class="entry-list" id="entryList">
-      <!-- Entries will be rendered here -->
+    <h1>EV Charging Status</h1>
+    <div class="form-container">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="hours">Hours:</label>
+            <input type="number" id="hours" step="0.01" min="0" required>
+        </div>
+        <button onclick="submitEntry()">Add Entry</button>
     </div>
-  </div>
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
+    <div id="error" class="error"></div>
+    <div class="entries" id="entries"></div>
 
-    async function fetchEntries() {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      renderEntries(data);
-    }
+    <script>
+        async function loadEntries() {
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbw6Zp1MyXQDHcvAoZgHsp97K2PRqTC3TuxZaoTmEDFcnD7QAa6RicipJ9K5VGHNr7HarQ/exec', { method: 'GET' });
+                const data = await response.json();
+                const entriesDiv = document.getElementById('entries');
+                entriesDiv.innerHTML = '';
+                const now = new Date();
+                data.slice(1).forEach(entry => { // Skip header
+                    const start = new Date(entry.Start);
+                    const hours = parseFloat(entry.Hours || 0);
+                    const end = new Date(start.getTime() + hours * 60 * 60 * 1000);
+                    const leftMs = end - now;
+                    const left = leftMs > 0 ? formatTime(leftMs / 1000 / 60) : '0:00';
 
-    function renderEntries(entries) {
-      const list = document.getElementById('entryList');
-      list.innerHTML = '';
-      entries.forEach(entry => {
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerHTML = `
-          <div class="entry-details">
-            <div><strong>Start:</strong> ${entry['Start Time']}</div>
-            <div><strong>End:</strong> ${entry['End Time']}</div>
-            <div><strong>Status:</strong> ${entry['Status']}</div>
-            <div><strong>Notes:</strong> ${entry['Notes'] || ''}</div>
-          </div>
-          <div class="entry-actions">
-            <button class="delete-btn" onclick="deleteEntry('${entry['Start Time']}')">Delete</button>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'entry';
+                    entryDiv.innerHTML = `
+                        <div>${entry.Name || ''}</div>
+                        <div>${formatDateTime(start) || ''}</div>
+                        <div>${formatDateTime(end) || ''}</div>
+                        <div>${left}</div>
+                        <button class="delete-btn" onclick="deleteEntry('${encodeURIComponent(entry.Start)}')">Delete</button>
+                    `;
+                    entriesDiv.appendChild(entryDiv);
+                });
+            } catch (error) {
+                document.getElementById('error').textContent = 'Error loading entries';
+            }
+        }
 
-    document.getElementById('addForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const payload = {
-        'Start Time': document.getElementById('startTime').value,
-        'End Time': document.getElementById('endTime').value,
-        'Status': document.getElementById('status').value,
-        'Notes': document.getElementById('notes').value,
-      };
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      this.reset();
-      fetchEntries();
-    });
+        function formatDateTime(date) {
+            if (!(date instanceof Date) || isNaN(date)) return '';
+            return date.toLocaleString('en-US', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+        }
 
-    async function deleteEntry(startTime) {
-      if (!confirm('Delete this entry?')) return;
-      await fetch(API_URL, {
-        method: 'DELETE',
-        body: JSON.stringify({ startTime }),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      fetchEntries();
-    }
+        function formatTime(minutes) {
+            const mins = Math.floor(minutes % 60);
+            const hrs = Math.floor(minutes / 60);
+            return `${hrs}:${mins.toString().padStart(2, '0')}`;
+        }
 
-    // Initial load
-    fetchEntries();
-  </script>
+        async function submitEntry() {
+            const name = document.getElementById('name').value.trim();
+            const hours = parseFloat(document.getElementById('hours').value);
+            const errorDiv = document.getElementById('error');
+
+            if (!name || isNaN(hours) || hours <= 0) {
+                errorDiv.textContent = 'Name and valid Hours are required';
+                return;
+            }
+
+            errorDiv.textContent = '';
+
+            const now = new Date();
+            const end = new Date(now.getTime() + hours * 60 * 60 * 1000);
+            const entry = { Name: name, Start: now.toISOString(), End: end.toISOString(), Hours: hours.toString(), Left: '' };
+
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbw6Zp1MyXQDHcvAoZgHsp97K2PRqTC3TuxZaoTmEDFcnD7QAa6RicipJ9K5VGHNr7HarQ/exec', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entry)
+                });
+                if (response.ok) {
+                    document.getElementById('name').value = '';
+                    document.getElementById('hours').value = '';
+                    await loadEntries();
+                } else {
+                    errorDiv.textContent = 'Error submitting entry';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error submitting entry';
+            }
+        }
+
+        async function deleteEntry(start) {
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbw6Zp1MyXQDHcvAoZgHsp97K2PRqTC3TuxZaoTmEDFcnD7QAa6RicipJ9K5VGHNr7HarQ/exec', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Start: decodeURIComponent(start) })
+                });
+                if (response.ok) {
+                    await loadEntries();
+                } else {
+                    document.getElementById('error').textContent = 'Error deleting entry';
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = 'Error deleting entry';
+            }
+        }
+
+        // Load entries on page load
+        loadEntries();
+        setInterval(loadEntries, 60000); // Refresh every minute to update timers
+    </script>
 </body>
 </html>
