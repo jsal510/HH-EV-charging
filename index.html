@@ -8,63 +8,78 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      background: #f6f6f6;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
     }
+
     .container {
       background: white;
-      padding: 40px;
+      padding: 2rem;
       border-radius: 20px;
-      box-shadow: 0px 0px 20px rgba(0,0,0,0.1);
+      box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
       width: 90%;
       max-width: 600px;
     }
+
     h1 {
-      text-align: center;
-      font-size: 24px;
+      margin-bottom: 1.5rem;
     }
+
     input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
+      width: 90%;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
     }
+
     button {
-      width: 100%;
-      padding: 10px;
-      background: #444;
-      color: white;
+      padding: 0.7rem 2rem;
+      margin-top: 1rem;
+      font-size: 1rem;
       border: none;
-      font-size: 16px;
+      border-radius: 10px;
+      background-color: #333;
+      color: white;
       cursor: pointer;
-      margin-bottom: 20px;
     }
+
     table {
       width: 100%;
+      margin-top: 2rem;
       border-collapse: collapse;
     }
+
     th, td {
-      text-align: center;
-      padding: 8px;
-      border-bottom: 1px solid #ddd;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      font-size: 0.95rem;
     }
-    .delete-btn {
+
+    .delete {
+      cursor: pointer;
       color: red;
       font-weight: bold;
-      cursor: pointer;
+    }
+
+    .delete:hover {
+      color: darkred;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>EV Charging Status</h1>
-    <input id="name" placeholder="Your Name" />
-    <input id="hours" placeholder="Charging Time (hours)" />
-    <button onclick="submitForm()">Submit</button>
-    <table>
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="number" id="hours" placeholder="Charging Time (hours)" />
+    <button onclick="submitData()">Submit</button>
+
+    <table id="dataTable">
       <thead>
         <tr>
           <th>Name</th>
@@ -74,58 +89,62 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="statusTable"></tbody>
+      <tbody></tbody>
     </table>
   </div>
 
   <script>
-    const scriptURL = 'YOUR_SCRIPT_DEPLOYMENT_URL_HERE';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
 
-    async function submitForm() {
-      const name = document.getElementById('name').value;
-      const hours = document.getElementById('hours').value;
-      if (!name || !hours) return alert("Fill out both fields.");
+    async function fetchData() {
+      const res = await fetch(scriptURL);
+      const data = await res.json();
+      const table = document.querySelector('#dataTable tbody');
+      table.innerHTML = '';
+
+      data.forEach((row, index) => {
+        if (!row.name) return;  // Skip blank rows
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${row.start || '-'}</td>
+          <td>${row.end || '-'}</td>
+          <td>${row.left || 'Done'}</td>
+          <td><span class="delete" onclick="deleteRow(${index})">✘</span></td>
+        `;
+        table.appendChild(tr);
+      });
+    }
+
+    async function submitData() {
+      const name = document.getElementById('name').value.trim();
+      const hours = document.getElementById('hours').value.trim();
+
+      if (!name || !hours) return alert("Both fields required.");
 
       await fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify({ name, hours }),
-        headers: { 'Content-Type': 'application/json' }
+        body: new URLSearchParams({ name, hours })
       });
+
       document.getElementById('name').value = '';
       document.getElementById('hours').value = '';
-      loadTable();
+      await fetchData();
     }
 
-    async function deleteRow(row) {
-      const res = await fetch(`${scriptURL}?row=${row}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) {
-        loadTable();
-      } else {
-        alert("Delete failed");
-      }
-    }
-
-    async function loadTable() {
-      const res = await fetch(scriptURL);
-      const data = await res.json();
-      const tbody = document.getElementById("statusTable");
-      tbody.innerHTML = "";
-
-      data.forEach(entry => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${entry.name}</td>
-          <td>${entry.start || "-"}</td>
-          <td>${entry.end || "-"}</td>
-          <td>${entry.left}</td>
-          <td><span class="delete-btn" onclick="deleteRow(${entry.row})">✗</span></td>
-        `;
-        tbody.appendChild(row);
+    async function deleteRow(index) {
+      const res = await fetch(scriptURL, {
+        method: 'POST',
+        body: new URLSearchParams({ deleteIndex: index })
       });
+
+      const result = await res.text();
+      if (result !== 'Success') alert("Delete failed");
+      await fetchData();
     }
 
-    loadTable();
+    fetchData();
   </script>
 </body>
 </html>
