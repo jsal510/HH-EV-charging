@@ -16,6 +16,7 @@
             text-align: center;
             margin-bottom: 20px;
             color: #fff;
+            font-size: 1.5em; /* Adjusted to fit on one line */
         }
         form {
             display: flex;
@@ -224,9 +225,10 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
                     left = `<b>${hoursLeft}:${minsLeft.toString().padStart(2, '0')}</b>`;
                     rowClass = 'active-row';
+                } else {
+                    left = '<b>Session Ended</b>';
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
