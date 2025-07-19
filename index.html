@@ -19,11 +19,13 @@
         }
         form {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         input {
+            margin-right: 10px;
             margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
@@ -31,8 +33,7 @@
             color: #fff;
             border: 1px solid #555;
             text-align: center;
-            width: 80%;
-            max-width: 300px;
+            min-width: 100px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -42,8 +43,6 @@
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
-            width: 80%;
-            max-width: 300px;
         }
         button:hover {
             background-color: #4B9CD3; /* Darker NC Blue */
@@ -91,10 +90,19 @@
         .delete-btn:hover {
             background-color: #333;
         }
+        .time-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        td[data-label="Time Left"] {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        td[data-label="Time Left"] .delete-btn {
+            margin-left: 10px;
+        }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
             table {
                 border: 0;
             }
@@ -123,21 +131,8 @@
                 font-weight: bold;
                 text-align: left;
             }
-            td[data-label="Time Left"] {
-                display: flex;
-                align-items: center;
-                border-bottom: 1px dotted #555;
-                padding-left: 50%;
-            }
-            td[data-label="Time Left"] .time-value {
-                flex: 1;
-                text-align: right;
-            }
-            td[data-label="Time Left"] .delete-btn {
-                margin-left: 10px;
-            }
-            td[data-label=""] {
-                display: none; /* Hide original delete td */
+            td:last-child {
+                border-bottom: 0;
             }
         }
     </style>
@@ -157,7 +152,6 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
-                    <th></th> <!-- Empty header for delete column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -206,7 +200,7 @@
             if (confirm('Are you sure you want to delete this entry?')) {
                 const params = `?action=delete&start=${encodeURIComponent(start)}`;
                 fetch(scriptURL + params)
-                .then(response => response.json())
+                    .then(response => response.json())
                 .then(data => {
                     currentData = data;
                     renderTable();
@@ -230,7 +224,8 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `<b>${hoursLeft}:${minsLeft.toString().padStart(2, '0')}</b>`;
+                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
+                    left = `<span class="time-value">${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}</span>`;
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
@@ -245,8 +240,7 @@
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
                     <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left"><span class="time-value">${left}</span><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
-                    <td data-label=""></td>
+                    <td data-label="Time Left">${left} <button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
                 tbody.appendChild(row);
             });
