@@ -1,126 +1,140 @@
-<!-- Full INDEX.HTML - paste into GITHUB -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EV Charging Status</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-    }
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: white;
-      padding: 2em;
-      border-radius: 25px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-      text-align: center;
-    }
-    input, button {
-      display: block;
-      width: 100%;
+      max-width: 700px;
+      margin: 20px auto;
       padding: 10px;
-      margin-bottom: 15px;
-      font-size: 16px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1em;
+      margin-top: 20px;
     }
     th, td {
-      padding: 0.5em;
-      border-bottom: 1px solid #ccc;
+      padding: 8px;
+      border: 1px solid #ccc;
       text-align: center;
     }
-    button.delete {
-      color: red;
+    button {
+      padding: 4px 8px;
       cursor: pointer;
-      border: none;
-      background: transparent;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>EV Charging Status</h2>
-    <input type="text" id="name" placeholder="Your Name">
-    <input type="number" id="hours" placeholder="Charging Time (hours)">
-    <button onclick="submitData()">Submit</button>
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Left</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="dataBody"></tbody>
-    </table>
-  </div>
+  <h2>EV Charging Status</h2>
+  <form id="chargingForm">
+    <label>
+      Name:
+      <input type="text" id="name" required>
+    </label>
+    <label>
+      Hours:
+      <input type="number" id="hours" step="0.1" min="0.1" required>
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <table id="chargingTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Left</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
 
-    function fetchData() {
-      fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-          const tableBody = document.getElementById('dataBody');
-          tableBody.innerHTML = '';
-          data.forEach((row, index) => {
-            if (!row.Name || !row.Start || !row.End) return; // Skip invalid rows
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${row.Name}</td>
-              <td>${row.Start}</td>
-              <td>${row.End}</td>
-              <td>${row.Left}</td>
-              <td><button class="delete" onclick="deleteRow(${index + 2})">❌</button></td>
-            `;
-            tableBody.appendChild(tr);
-          });
-        });
+    async function fetchData() {
+      try {
+        const response = await fetch(BASE_URL);
+        const data = await response.json();
+        populateTable(data);
+      } catch (error) {
+        console.error("GET failed:", error);
+        alert("Failed to load data");
+      }
     }
 
-    function submitData() {
-      const name = document.getElementById('name').value;
-      const hours = document.getElementById('hours').value;
+    function populateTable(data) {
+      const tableBody = document.querySelector("#chargingTable tbody");
+      tableBody.innerHTML = "";
 
-      if (!name || !hours) {
-        alert('Please enter name and charging time.');
+      data.forEach(entry => {
+        const now = new Date();
+        const end = new Date(entry.End);
+        const start = new Date(entry.Start);
+        const minutesLeft = Math.max(0, Math.round((end - now) / 60000));
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${entry.Name}</td>
+          <td>${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+          <td>${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+          <td>${minutesLeft} min</td>
+          <td><button onclick="deleteEntry('${entry.Start}')">❌</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById("chargingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const hours = parseFloat(document.getElementById("hours").value);
+      if (!name || isNaN(hours) || hours <= 0) {
+        alert("Please enter a valid name and positive number of hours.");
         return;
       }
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: new URLSearchParams({ name, hours })
-      })
-      .then(res => res.text())
-      .then(response => {
-        console.log('Success!', response);
-        fetchData();
-      })
-      .catch(error => console.error('Error!', error.message));
-    }
+      try {
+        const response = await fetch(BASE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, hours })
+        });
+        const result = await response.json();
+        if (result.status === "success") {
+          fetchData();
+          document.getElementById("chargingForm").reset();
+        } else {
+          alert("Submit failed: " + result.message);
+        }
+      } catch (error) {
+        console.error("POST failed:", error);
+        alert("Failed to submit");
+      }
+    });
 
-    function deleteRow(row) {
-      fetch(scriptURL + '?row=' + row, {
-        method: 'DELETE'
-      })
-      .then(res => res.text())
-      .then(result => {
-        if (result === 'Success') {
+    async function deleteEntry(startTime) {
+      try {
+        const response = await fetch(BASE_URL, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ startTime })
+        });
+        const result = await response.json();
+        if (result.status === "success") {
           fetchData();
         } else {
-          alert('Delete failed');
+          alert("Delete failed: " + result.message);
         }
-      });
+      } catch (error) {
+        console.error("DELETE failed:", error);
+        alert("Failed to delete");
+      }
     }
 
     window.onload = fetchData;
