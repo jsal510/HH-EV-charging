@@ -225,7 +225,7 @@
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
                     const secsLeft = Math.floor((remainingMs % 60000) / 1000);
-                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
+                    left = `<b>${hoursLeft}:${minsLeft.toString().padStart(2, '0')}</b>`;
                     rowClass = 'active-row';
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
