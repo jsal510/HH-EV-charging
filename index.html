@@ -105,30 +105,30 @@
                 display: none;
             }
             tr {
-                margin-bottom: 5px; /* Further reduced for compactness */
+                margin-bottom: 5px; /* Reduced */
                 display: block;
                 border: 1px solid #555;
-                padding: 3px; /* Even less padding */
+                padding: 3px; /* Reduced */
                 background-color: #333;
                 position: relative;
-                min-height: auto; /* Removed min-height to allow natural squishing */
+                min-height: auto;
             }
             td {
                 border: none;
                 display: block;
                 text-align: right;
-                font-size: 11px; /* Smaller font for vertical compression */
-                border-bottom: none; /* Remove lines between rows for clean look */
+                font-size: 11px; /* Smaller for scrunch */
+                border-bottom: none; /* No lines */
                 position: relative;
-                padding: 1px 0 1px 40%; /* Minimal vertical padding */
-                line-height: 1.1; /* Tighter line height */
+                padding: 0 0 0 40%; /* No vertical padding */
+                line-height: 1.0; /* Tighter */
             }
             td:before {
                 content: attr(data-label);
                 position: absolute;
                 left: 0;
                 width: 33%;
-                padding-left: 5px; /* Reduced horizontal padding */
+                padding-left: 5px;
                 font-weight: bold;
                 text-align: left;
             }
@@ -139,8 +139,8 @@
                 text-align: center;
                 padding-left: 0;
                 padding-top: 0;
-                padding-bottom: 3px; /* Reduced bottom padding */
-                font-size: 1.1em; /* Slightly smaller */
+                padding-bottom: 2px; /* Minimal */
+                font-size: 1.1em;
                 font-weight: bold;
                 border-bottom: none;
             }
@@ -152,8 +152,8 @@
             }
             td[data-label=""] {
                 position: absolute;
-                top: 3px; /* Closer to top */
-                right: 3px; /* Closer to edge */
+                top: 3px;
+                right: 3px;
                 padding: 0;
                 border: none;
                 background: none;
