@@ -1,68 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EV Charging Tracker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Orbitron', sans-serif;
       background-color: #f4f4f4;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
+      font-family: 'Orbitron', sans-serif;
       text-align: center;
+      padding: 40px;
     }
+
     h1 {
+      font-size: 36px;
       margin-bottom: 20px;
     }
-    form {
-      margin-bottom: 20px;
-    }
-    input[type="text"], input[type="number"] {
-      padding: 8px;
+
+    input, button {
+      font-family: 'Orbitron', sans-serif;
+      padding: 10px;
+      margin: 10px;
       font-size: 16px;
-      width: 150px;
-      margin: 0 5px;
     }
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+
     table {
       width: 100%;
+      max-width: 800px;
+      margin: 30px auto;
       border-collapse: collapse;
-      margin-top: 10px;
     }
+
     th, td {
-      border: 1px solid #999;
-      padding: 8px;
+      border: 1px solid #222;
+      padding: 12px;
+      text-align: center;
     }
+
     th {
-      background-color: #222;
+      background-color: #111;
       color: white;
+      font-size: 18px;
     }
-    td:last-child button {
+
+    td {
+      background-color: #fff;
+      font-size: 16px;
+    }
+
+    .btn-delete {
       background-color: #e74c3c;
       color: white;
       border: none;
-      padding: 5px 10px;
+      padding: 6px 12px;
       cursor: pointer;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-
   <h1>EV Charging Tracker</h1>
+  <div>
+    <label>Name:</label>
+    <input type="text" id="name" />
+    <label>Hours:</label>
+    <input type="number" id="hours" />
+    <button onclick="submitForm()">Submit</button>
+  </div>
 
-  <form id="chargingForm">
-    <label>Name: <input type="text" id="name" required></label>
-    <label>Hours: <input type="number" id="hours" min="0.1" step="0.1" required></label>
-    <button type="submit">Submit</button>
-  </form>
-
-  <table id="chargingTable">
+  <table id="dataTable">
     <thead>
       <tr>
         <th>Name</th>
@@ -76,81 +83,82 @@
   </table>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec";
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbx8h_wfJt1BKBoVZxZR1fA7qz-rywHQmwovDaKTnZ2nFrEtgcvp1gs_7wyGiD9P115NdQ/exec';
 
-    function fetchData() {
-      fetch(BASE_URL)
-        .then(res => res.json())
-        .then(data => populateTable(data))
-        .catch(err => alert("Failed to fetch data"));
+    function loadData() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const table = document.querySelector('#dataTable tbody');
+          table.innerHTML = '';
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+              const td = document.createElement('td');
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            const deleteTd = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('btn-delete');
+            deleteBtn.onclick = () => deleteEntry(row[0]);
+            deleteTd.appendChild(deleteBtn);
+            tr.appendChild(deleteTd);
+            table.appendChild(tr);
+          });
+        })
+        .catch(() => alert('Failed to fetch data'));
     }
 
-    function populateTable(data) {
-      const tbody = document.querySelector("#chargingTable tbody");
-      tbody.innerHTML = "";
-
-      data.forEach(entry => {
-        const now = new Date();
-        const end = new Date(entry.End);
-        const minsLeft = Math.max(0, Math.round((end - now) / 60000));
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${entry.Name}</td>
-          <td>${new Date(entry.Start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
-          <td>${new Date(entry.End).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
-          <td>${minsLeft} min</td>
-          <td><button onclick="deleteEntry('${entry.Start}')">❌</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    document.getElementById("chargingForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const hours = parseFloat(document.getElementById("hours").value);
-      if (!name || isNaN(hours) || hours <= 0) {
-        alert("Please enter valid name and hours");
+    function submitForm() {
+      const name = document.getElementById('name').value.trim();
+      const hours = document.getElementById('hours').value.trim();
+      if (!name || !hours) {
+        alert('Please enter both name and hours.');
         return;
       }
 
-      fetch(BASE_URL, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ name, hours })
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          name: name,
+          hours: hours
+        }),
       })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "success") {
-          fetchData();
-          document.getElementById("chargingForm").reset();
-        } else {
-          alert("Failed to submit: " + res.message);
-        }
-      })
-      .catch(() => alert("Failed to submit"));
-    });
-
-    function deleteEntry(startTime) {
-      fetch(BASE_URL, {
-        method: "DELETE",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ startTime })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "success") {
-          fetchData();
-        } else {
-          alert("Failed to delete: " + res.message);
-        }
-      })
-      .catch(() => alert("Failed to delete"));
+        .then(response => response.text())
+        .then(result => {
+          if (result === 'Success') {
+            loadData();
+            document.getElementById('name').value = '';
+            document.getElementById('hours').value = '';
+          } else {
+            alert('Failed to submit');
+          }
+        })
+        .catch(() => alert('Failed to submit'));
     }
 
-    window.onload = fetchData;
-  </script>
+    function deleteEntry(name) {
+      fetch(`${apiUrl}?name=${encodeURIComponent(name)}`, {
+        method: 'DELETE'
+      })
+        .then(response => response.text())
+        .then(result => {
+          if (result === 'Deleted') {
+            loadData();
+          } else {
+            alert('Delete failed');
+          }
+        })
+        .catch(() => alert('Delete failed'));
+    }
 
+    // Initial load
+    loadData();
+  </script>
 </body>
 </html>
