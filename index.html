@@ -16,16 +16,15 @@
             text-align: center;
             margin-bottom: 20px;
             color: #fff;
+            font-size: 1.5em; /* Adjusted to fit on one line */
         }
         form {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
         input {
-            margin-right: 10px;
             margin-bottom: 10px;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
@@ -33,7 +32,8 @@
             color: #fff;
             border: 1px solid #555;
             text-align: center;
-            min-width: 100px;
+            width: 80%;
+            max-width: 300px;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -43,6 +43,8 @@
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             transition: background-color 0.3s;
+            width: 80%;
+            max-width: 300px;
         }
         button:hover {
             background-color: #4B9CD3; /* Darker NC Blue */
@@ -90,17 +92,9 @@
         .delete-btn:hover {
             background-color: #333;
         }
-        .time-value {
+        td[data-label="Time Left"] {
             font-size: 1.2em;
             font-weight: bold;
-        }
-        td[data-label="Time Left"] {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        td[data-label="Time Left"] .delete-btn {
-            margin-left: 10px;
         }
         @media (max-width: 600px) {
             table {
@@ -152,6 +146,7 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
+                    <th></th> <!-- Empty header for delete column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -224,8 +219,7 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    const secsLeft = Math.floor((remainingMs % 60000) / 1000);
-                    left = `<span class="time-value">${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}</span>`;
+                    left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}`;
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
@@ -240,7 +234,8 @@
                     <td data-label="Name">${entry.Name}</td>
                     <td data-label="Start">${formattedStart}</td>
                     <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left">${left} <button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    <td data-label="Time Left">${left}</td>
+                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
                 tbody.appendChild(row);
             });
