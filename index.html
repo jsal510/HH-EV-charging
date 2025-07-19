@@ -29,6 +29,7 @@
             background-color: #444;
             color: #fff;
             border: 1px solid #555;
+            text-align: center;
         }
         button {
             background-color: #7BAFD4; /* North Carolina Blue */
@@ -53,7 +54,7 @@
         th, td {
             border: 1px solid #555;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
             background-color: #444;
@@ -132,17 +133,19 @@
         }
 
         function deleteEntry(start) {
-            const params = `?action=delete&start=${encodeURIComponent(start)}`;
-            fetch(scriptURL + params)
-                .then(response => response.json())
-                .then(data => {
-                    currentData = data;
-                    renderTable();
-                })
-                .catch(error => {
-                    console.error('Delete error:', error);
-                    alert('Error deleting entry. Check console for details.');
-                });
+            if (confirm('Are you sure you want to delete this entry?')) {
+                const params = `?action=delete&start=${encodeURIComponent(start)}`;
+                fetch(scriptURL + params)
+                    .then(response => response.json())
+                    .then(data => {
+                        currentData = data;
+                        renderTable();
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        alert('Error deleting entry. Check console for details.');
+                    });
+            }
         }
 
         function renderTable() {
@@ -160,11 +163,13 @@
                     const secsLeft = Math.floor((remainingMs % 60000) / 1000);
                     left = `${hoursLeft}:${minsLeft.toString().padStart(2, '0')}:${secsLeft.toString().padStart(2, '0')}`;
                 }
+                const formattedStart = `${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' })}`;
+                const formattedEnd = `${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' })}`;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${entry.Name}</td>
-                    <td>${startDate.toLocaleString()}</td>
-                    <td>${endDate.toLocaleString()}</td>
+                    <td>${formattedStart}</td>
+                    <td>${formattedEnd}</td>
                     <td>${left}</td>
                     <td><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
                 `;
