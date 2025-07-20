@@ -8,7 +8,7 @@
         body {
             font-family: 'Roboto', sans-serif;
             margin: 20px;
-            background-color: #333;
+            background-color: #222;
             color: #fff;
         }
         h1 {
@@ -27,9 +27,9 @@
             margin-bottom: 10px;
             padding: 8px;
             font-family: 'Roboto', sans-serif;
-            background-color: #444;
+            background-color: #333;
             color: #fff;
-            border: 1px solid #555;
+            border: 1px solid #444;
             text-align: center;
             width: 80%;
             max-width: 300px;
@@ -78,18 +78,18 @@
             margin: 0 auto;
         }
         th, td {
-            border: 1px solid #555;
+            border: 1px solid #444;
             padding: 8px;
             text-align: center;
         }
         th {
-            background-color: #444;
-        }
-        td {
             background-color: #333;
         }
+        td {
+            background-color: #222;
+        }
         .time-left-header {
-            font-size: 0.9em;
+            font-size: 1.2em;
         }
         .delete-btn {
             background-color: #000;
@@ -105,7 +105,7 @@
             font-size: 16px;
         }
         .delete-btn:hover {
-            background-color: #333;
+            background-color: #222;
         }
         .active-row {
             border: 2px solid green;
@@ -271,11 +271,11 @@
                 }
                 const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedStart = `<span style="font-size: 0.67em;">${dateStart}</span> - <b>${timeStart}</b>`;
+                const formattedStart = `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
                 
                 const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedEnd = `<span style="font-size: 0.67em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
+                const formattedEnd = `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
                 
                 const row = document.createElement('tr');
                 row.className = rowClass;
