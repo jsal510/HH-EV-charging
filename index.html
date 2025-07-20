@@ -44,20 +44,20 @@
             transition: background-color 0.3s;
             width: 80%;
             max-width: 225px;
-            font-size: 1.4em;  /* Increased font size */
+            font-size: 1.2em;  /* Increased font size */
             text-transform: uppercase;  /* Capitalizes text */
         }
         button:hover {
             background-color: #37739e; /* North Carolina Blue */
         }
         button:active {
-            background-color: ##000000; /* BLACK */
+            background-color: #000000; /* BLACK */
         }
         .delete-all-btn {
             background-color: #802424;
             color: #fff;
             border: none;
-            padding: 15px 15px;
+            padding: 5px 10px;  /* Tightened from 15px */
             cursor: pointer;
             font-family: 'Roboto', sans-serif;
             transition: background-color 0.3s;
@@ -65,6 +65,9 @@
             max-width: 125px;
             margin: 20px auto 0;
             display: block;
+            font-size: .8em;  /* Added to override button’s 1.2em */
+            text-transform: uppercase;  /* Kept for consistency, can remove if undesired */
+        }
         }
         .delete-all-btn:hover {
             background-color: #a33131;
@@ -92,6 +95,9 @@
         }
         td[data-label="Time Left"] {
             vertical-align: middle;
+            display: table-cell;  /* Reset to table-cell behavior */
+            height: 100%;  /* Ensure full cell height */
+            text-align: center;  /* Reinforce centering */
         }
         .time-left-header {
             font-size: .9em;
