@@ -33,7 +33,15 @@
             text-align: center;
             width: 90%;
             max-width: 350px;
+        }  /* End of input block */
+        input[type="number"] {
+            -moz-appearance: textfield;  /* Firefox: Hides spinners */
         }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;  /* Chrome, Safari, Edge: Hides spinners */
+            margin: 0;
+        }  /* End of spinner removal rules */
        button {
             background-color: #37739e;
             color: #fff;
