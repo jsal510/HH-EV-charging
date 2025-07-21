@@ -106,7 +106,10 @@
             background-color: #222;
         }
         td[data-label=""] {
-            vertical-align: middle;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;  /* Set a specific height to match typical row height, adjust if needed */
         }
         .time-left-header {
             font-size: .9em;
@@ -171,11 +174,11 @@
                 border-bottom: 0;
                 padding-left: 0;
                 text-align: center;
-                padding: 3px 5px;  /* Restored vertical padding for better spacing */
+                padding: 3px 5px;  /* Keeps vertical spacing */
                 display: flex;
                 align-items: center;
-                justify-content: center;  /* Keeps horizontal centering */
-                min-height: 5px;  /* Minimum height to match button, allows growth */
+                justify-content: center;  /* Ensures horizontal centering */
+                min-height: 20px;  /* Increased to match desktop height, allows growth */
             }
             .active-row {
                 border: 2px solid green;
