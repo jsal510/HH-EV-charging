@@ -44,38 +44,46 @@
             -webkit-appearance: none;  /* Chrome, Safari, Edge: Hides spinners */
             margin: 0;
         }  /* End of spinner removal rules */
-       button {
-           background-color: #1a5178;  /* Dark blue */
-    color: #fff;
-    border: none;
-    padding: 15px 15px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    width: 90%;
-    max-width: 175px;
-    font-size: 1.1em;
-    text-transform: uppercase;
-}
-button:active {
-    background-color: #000000;  /* Black when touched */
-}
+          button {
+            background-color: #1a5178;
+            color: #fff;
+            border: none;
+            padding: 15px 15px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            width: 90%;
+            max-width: 175px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;  /* Added 20px space below Submit */
+        }
+        button:active {
+            background-color: #000000;  /* Black when touched */
+            }
         .delete-all-btn {
-    background-color: #a33131;  /* Red */
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    width: 80%;
-    max-width: 125px;
-    margin: 20px auto 0;
-    display: block;
-    font-size: 0.8em;
-    text-transform: uppercase;
-}
-.delete-all-btn:active {
-    background-color: #000000;  /* Black when touched */
-}
+            background-color: #a33131;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            width: 80%;
+            max-width: 125px;
+            margin: 20px auto 20px;  /* Changed from 0 to 20px for space below Delete All */
+            display: block;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+        .delete-all-btn:active {
+            background-color: #000000;  /* Black when touched */
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            color: #fff;
+            font-size: 1em;
+            margin-top: 5px;
+        }
         .table-container {
             overflow-x: auto;
             max-width: 100%;
