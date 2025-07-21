@@ -168,7 +168,11 @@
                 border-bottom: 0;
                 padding-left: 0;
                 text-align: center;
-                padding: 3px 5px;
+                padding: 0 5px;  /* Removed vertical padding to control height */
+                display: flex;
+                align-items: center;
+                justify-content: center;  /* Ensures horizontal centering */
+                height: 15px;  /* Matches button height for consistency */
             }
             .active-row {
                 border: 2px solid green;
