@@ -4,7 +4,8 @@
     <title>EV Charging Status</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style> /* 21 July 2 15pm VERSION */
+    <style>
+        /* JULY 21 4 32PM VERSION */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 15px;
@@ -34,18 +35,18 @@
             width: 90%;
             max-width: 350px;
             font-weight: bold;
-            font-size: 1.0em;  /* Added to explicitly set font size, default is 16px */
-        }  /* End of input block */
+            font-size: 1.0em;
+        }
         input[type="number"] {
-            -moz-appearance: textfield;  /* Firefox: Hides spinners */
+            -moz-appearance: textfield;
         }
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;  /* Chrome, Safari, Edge: Hides spinners */
+            -webkit-appearance: none;
             margin: 0;
-        }  /* End of spinner removal rules */
-       button {
-            background-color: #1a5178;  /* Dark blue */
+        }
+        button {
+            background-color: #1a5178;
             color: #fff;
             border: none;
             padding: 15px 15px;
@@ -55,12 +56,13 @@
             max-width: 175px;
             font-size: 1.1em;
             text-transform: uppercase;
-            }
+            margin-bottom: 20px;
+        }
         button:active {
-            background-color: #000000;  /* Black when touched */
-            }
+            background-color: #000000;
+        }
         .delete-all-btn {
-            background-color: #a33131;  /* Red */
+            background-color: #a33131;
             color: #fff;
             border: none;
             padding: 5px 10px;
@@ -74,7 +76,14 @@
             text-transform: uppercase;
         }
         .delete-all-btn:active {
-            background-color: #000000;  /* Black when touched */
+            background-color: #000000;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            color: #fff;
+            font-size: 1em;
+            margin: 10px 0;
         }
         .table-container {
             overflow-x: auto;
@@ -97,7 +106,7 @@
         td {
             background-color: #222;
         }
-         td[data-label="Time Left"] {
+        td[data-label="Time Left"] {
             vertical-align: middle;
         }
         .time-left-header {
@@ -115,7 +124,7 @@
             display: inline-block;
             text-align: center;
             font-size: 12px;
-            font-weight: bold;  /* Added to bold the X */
+            font-weight: bold;
         }
         .delete-btn:hover {
             background-color: #222;
@@ -145,22 +154,22 @@
                 border-bottom: 1px dotted #555;
                 position: relative;
                 padding-left: 50%;
-                padding-right: 15px;  /* Added right padding for values */
+                padding-right: 15px;
             }
             td:before {
                 content: attr(data-label);
                 position: absolute;
                 left: 0;
                 width: 50%;
-                padding-left: 15px;  /* Increased from 15px to add more left padding for labels */
+                padding-left: 15px;
                 font-weight: bold;
                 text-align: left;
             }
             td:last-child {
                 border-bottom: 0;
-                padding-left: 0;  /* Remove the 50% split */
-                text-align: center;  /* Center the X horizontally */
-                padding: 3px 5px;  /* Added 3px vertical padding, kept 5px horizontal */
+                padding-left: 0;
+                text-align: center;
+                padding: 3px 5px;
             }
             .active-row {
                 border: 2px solid green;
@@ -173,6 +182,7 @@
 </head>
 <body>
     <h1>EV Charging Status</h1>
+    <div id="loading" style="display: none; text-align: center; color: #fff; font-size: 1em;">LOADING...</div>
     <form onsubmit="submitEntry(); return false;">
         <input id="name" placeholder="Enter Name" required>
         <input id="hours" type="number" min="0" step="0.5" placeholder="Enter Hours" required>
@@ -186,7 +196,7 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
-                    <th></th> <!-- Empty header for delete column -->
+                    <th></th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -196,17 +206,20 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
-        let currentData = [];  // Store data for dynamic updates
+        let currentData = [];
 
         function loadData() {
+            document.getElementById('loading').style.display = 'block';
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
                     currentData = data;
                     renderTable();
+                    document.getElementById('loading').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
@@ -223,16 +236,19 @@
             }
             localStorage.setItem('lastName', name);
             const params = `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
+            document.getElementById('loading').style.display = 'block';
             fetch(scriptURL + params)
                 .then(response => response.json())
                 .then(data => {
                     currentData = data;
                     renderTable();
+                    document.getElementById('loading').style.display = 'none';
                     document.getElementById('hours').value = '';
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
                     alert('Error submitting entry. Check console for details.');
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
@@ -255,15 +271,18 @@
         function deleteAllEntries() {
             if (confirm('Are you sure you want to delete all entries?')) {
                 const params = `?action=delete_all`;
+                document.getElementById('loading').style.display = 'block';
                 fetch(scriptURL + params)
                     .then(response => response.json())
                     .then(data => {
                         currentData = data;
                         renderTable();
+                        document.getElementById('loading').style.display = 'none';
                     })
                     .catch(error => {
                         console.error('Delete all error:', error);
                         alert('Error deleting all entries. Check console for details.');
+                        document.getElementById('loading').style.display = 'none';
                     });
             }
         }
