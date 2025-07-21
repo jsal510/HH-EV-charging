@@ -103,9 +103,6 @@
         th {
             background-color: #333;
         }
-        thead {
-                display: none;
-            }
         td {
             background-color: #222;
         }
@@ -134,6 +131,9 @@
         }
         .active-row {
             border: 2px solid green;
+        }
+        thead {
+            display: none;  /* Hide header initially on desktop */
         }
         @media (max-width: 600px) {
             h1 {
@@ -212,17 +212,18 @@
         let currentData = [];  // Store data for dynamic updates
 
         function loadData() {
-            document.getElementById('loading').style.display = 'block';  /* Show LOADING... on load/refresh */
+            document.getElementById('loading').style.display = 'block';
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
                     currentData = data;
                     renderTable();
-                    document.getElementById('loading').style.display = 'none';  /* Hide after load */
+                    document.querySelector('thead').setAttribute('data-loaded', 'true');  /* Show header on desktop after load */
+                    document.getElementById('loading').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);
-                    document.getElementById('loading').style.display = 'none';  /* Hide on error */
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
