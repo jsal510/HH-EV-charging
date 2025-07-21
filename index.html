@@ -7,24 +7,24 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 15px;
+            margin: 12px;
             background-color: #222;
             color: #fff;
         }
         h1 {
             font-weight: bold;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: #fff;
         }
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         input {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding: 6px;
             font-family: 'Roboto', sans-serif;
             background-color: #333;
@@ -55,7 +55,7 @@
             max-width: 175px;
             font-size: 1.1em;
             text-transform: uppercase;
-            margin-bottom: 20px;  /* Space below Submit for LOADING... */
+            margin-bottom: 30px;  /* Space below Submit for LOADING... */
         }
         button:active {
             background-color: #000000;
@@ -82,7 +82,7 @@
             text-align: center;
             color: #fff;
             font-size: 1em;
-            margin-top: 5px;
+            margin-top: 0px;
         }
         .table-container {
             overflow-x: auto;
@@ -185,7 +185,7 @@
         <input id="name" placeholder="Enter Name" required>
         <input id="hours" type="number" min="0" step="0.5" placeholder="Enter Hours" required>
         <button type="submit">Submit</button>
-        <div id="loading" style="display: none; text-align: center; color: #fff; font-size: 1em;">LOADING...</div>
+        <div id="loading" style="display: none; text-align: center; color: #fff; font-size: 1em;">...LOADING...</div>
     </form>
     <div class="table-container">
         <table id="statusTable">
