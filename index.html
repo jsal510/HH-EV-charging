@@ -4,27 +4,27 @@
     <title>EV Charging Status</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+    <style> /* 21 July 2 15pm VERSION */
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 12px;
+            margin: 15px;
             background-color: #222;
             color: #fff;
         }
         h1 {
             font-weight: bold;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             color: #fff;
         }
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
         input {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             padding: 6px;
             font-family: 'Roboto', sans-serif;
             background-color: #333;
@@ -34,18 +34,18 @@
             width: 90%;
             max-width: 350px;
             font-weight: bold;
-            font-size: 1.0em;
-        }
+            font-size: 1.0em;  /* Added to explicitly set font size, default is 16px */
+        }  /* End of input block */
         input[type="number"] {
-            -moz-appearance: textfield;
+            -moz-appearance: textfield;  /* Firefox: Hides spinners */
         }
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
+            -webkit-appearance: none;  /* Chrome, Safari, Edge: Hides spinners */
             margin: 0;
-        }
-        button {
-            background-color: #1a5178;
+        }  /* End of spinner removal rules */
+       button {
+            background-color: #1a5178;  /* Dark blue */
             color: #fff;
             border: none;
             padding: 15px 15px;
@@ -55,13 +55,12 @@
             max-width: 175px;
             font-size: 1.1em;
             text-transform: uppercase;
-            margin-bottom: 15px;  /* Space below Submit for LOADING... */
-        }
+            }
         button:active {
-            background-color: #000000;
-        }
+            background-color: #000000;  /* Black when touched */
+            }
         .delete-all-btn {
-            background-color: #a33131;
+            background-color: #a33131;  /* Red */
             color: #fff;
             border: none;
             padding: 5px 10px;
@@ -69,20 +68,13 @@
             font-family: 'Roboto', sans-serif;
             width: 80%;
             max-width: 125px;
-            margin: 20px auto 0;  /* No space below, LOADING... only under Submit */
+            margin: 20px auto 0;
             display: block;
             font-size: 0.8em;
             text-transform: uppercase;
         }
         .delete-all-btn:active {
-            background-color: #000000;
-        }
-        #loading {
-            display: none;
-            text-align: center;
-            color: #fff;
-            font-size: 1em;
-            margin-top: 0px;
+            background-color: #000000;  /* Black when touched */
         }
         .table-container {
             overflow-x: auto;
@@ -105,17 +97,11 @@
         td {
             background-color: #222;
         }
-        td[data-label=""] {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 20px;  /* Set a specific height to match typical row height, adjust if needed */
+         td[data-label="Time Left"] {
+            vertical-align: middle;
         }
         .time-left-header {
             font-size: .9em;
-        }
-        td[data-label="Time Left"] {
-            vertical-align: middle;
         }
         .delete-btn {
             background-color: #000;
@@ -129,7 +115,7 @@
             display: inline-block;
             text-align: center;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: bold;  /* Added to bold the X */
         }
         .delete-btn:hover {
             background-color: #222;
@@ -159,26 +145,22 @@
                 border-bottom: 1px dotted #555;
                 position: relative;
                 padding-left: 50%;
-                padding-right: 15px;
+                padding-right: 15px;  /* Added right padding for values */
             }
             td:before {
                 content: attr(data-label);
                 position: absolute;
                 left: 0;
                 width: 50%;
-                padding-left: 15px;
+                padding-left: 15px;  /* Increased from 15px to add more left padding for labels */
                 font-weight: bold;
                 text-align: left;
             }
-           td:last-child {
+            td:last-child {
                 border-bottom: 0;
-                padding-left: 0;
-                text-align: center;
-                padding: 3px 5px;  /* Keeps vertical spacing */
-                display: flex;
-                align-items: center;
-                justify-content: center;  /* Ensures horizontal centering */
-                min-height: 20px;  /* Increased to match desktop height, allows growth */
+                padding-left: 0;  /* Remove the 50% split */
+                text-align: center;  /* Center the X horizontally */
+                padding: 3px 5px;  /* Added 3px vertical padding, kept 5px horizontal */
             }
             .active-row {
                 border: 2px solid green;
@@ -195,7 +177,6 @@
         <input id="name" placeholder="Enter Name" required>
         <input id="hours" type="number" min="0" step="0.5" placeholder="Enter Hours" required>
         <button type="submit">Submit</button>
-        <div id="loading" style="display: none; text-align: center; color: #fff; font-size: 1em;">...LOADING...</div>
     </form>
     <div class="table-container">
         <table id="statusTable">
@@ -205,7 +186,7 @@
                     <th>Start</th>
                     <th>End</th>
                     <th class="time-left-header">Time Left</th>
-                    <th></th>
+                    <th></th> <!-- Empty header for delete column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -215,7 +196,7 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
-        let currentData = [];
+        let currentData = [];  // Store data for dynamic updates
 
         function loadData() {
             fetch(scriptURL)
@@ -242,19 +223,16 @@
             }
             localStorage.setItem('lastName', name);
             const params = `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
-            document.getElementById('loading').style.display = 'block';  /* Show LOADING... */
             fetch(scriptURL + params)
                 .then(response => response.json())
                 .then(data => {
                     currentData = data;
                     renderTable();
-                    document.getElementById('loading').style.display = 'none';  /* Hide LOADING... */
                     document.getElementById('hours').value = '';
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
                     alert('Error submitting entry. Check console for details.');
-                    document.getElementById('loading').style.display = 'none';  /* Hide on error */
                 });
         }
 
@@ -277,18 +255,15 @@
         function deleteAllEntries() {
             if (confirm('Are you sure you want to delete all entries?')) {
                 const params = `?action=delete_all`;
-                document.getElementById('loading').style.display = 'block';  /* Show LOADING... */
                 fetch(scriptURL + params)
                     .then(response => response.json())
                     .then(data => {
                         currentData = data;
                         renderTable();
-                        document.getElementById('loading').style.display = 'none';  /* Hide LOADING... */
                     })
                     .catch(error => {
                         console.error('Delete all error:', error);
                         alert('Error deleting all entries. Check console for details.');
-                        document.getElementById('loading').style.display = 'none';  /* Hide on error */
                     });
             }
         }
