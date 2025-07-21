@@ -102,8 +102,11 @@
         th {
             background-color: #333;
         }
-        td {
-            background-color: #222;
+        td[data-label=""] {
+            vertical-align: middle;  /* Centers the delete button vertically in the last td */
+        }
+        .time-left-header {
+            font-size: .9em;
         }
         td[data-label="Time Left"] {
             vertical-align: middle;
@@ -164,15 +167,15 @@
                 font-weight: bold;
                 text-align: left;
             }
-            td:last-child {
+           td:last-child {
                 border-bottom: 0;
                 padding-left: 0;
                 text-align: center;
-                padding: 0 5px;  /* Removed vertical padding to control height */
+                padding: 3px 5px;  /* Restored vertical padding for better spacing */
                 display: flex;
                 align-items: center;
-                justify-content: center;  /* Ensures horizontal centering */
-                height: 15px;  /* Matches button height for consistency */
+                justify-content: center;  /* Keeps horizontal centering */
+                min-height: 15px;  /* Minimum height to match button, allows growth */
             }
             .active-row {
                 border: 2px solid green;
