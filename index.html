@@ -217,7 +217,7 @@
         let currentData = [];  // Store data for dynamic updates
 
        function loadData() {
-            document.getElementById('status').innerHTML = '<span style="font-weight: bold; color: #baab36;">---LOADING----</span>';
+                        document.getElementById('loading').style.display = 'block';  /* Show LOADING... on load/refresh */
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
