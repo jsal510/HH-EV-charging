@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* JULY 21 2025, 05:45 PM VERSION */
+        /* JULY 21 2025, 10:58 PM VERSION */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 12px;
@@ -312,7 +312,7 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `<b style="font-size: 1.5em;">${hoursLeft}:${minsLeft.toString().padStart(2, '0')}</b>`;
+                    left = `<b style="font-size: 1.5em;">${hoursLeft}HRS ${minsLeft}MINS</b>`;
                     rowClass = 'active-row';
                 } else {
                     left = '<b>Session Ended</b>';
