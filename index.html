@@ -312,7 +312,7 @@
                 if (remainingMs > 0) {
                     const hoursLeft = Math.floor(remainingMs / 3600000);
                     const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
+                    left = `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr  `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
                     rowClass = 'active-row';
                 } else {
                     left = '<b>Session Ended</b>';
