@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* JULY 23 2025, 10:47 PM VERSION */
+        /* JULY 23 2025, 10:55 PM VERSION */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 12px;
@@ -84,7 +84,7 @@
             text-align: center;
             font-weight: bold;
             color: #ffde21;
-            font-size: 1em;
+            font-size: 1.5em;
             margin-top: -4px;
             margin-bottom: 8px;
         }
@@ -327,11 +327,15 @@
             }
         }
         function endSession(start) {
-            // Remove green border from the row immediately
+            // Remove green border and set Time Left to "0 mins" immediately
             const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
             for (const row of rows) {
                 if (row.getAttribute('data-start') === start) {
                     row.classList.remove('active-row');
+                    const timeLeftCell = row.querySelector('td[data-label="Time Left"]');
+                    if (timeLeftCell) {
+                        timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">0</b> mins';
+                    }
                     break;
                 }
             }
