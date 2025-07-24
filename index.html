@@ -80,14 +80,14 @@
             background-color: #000000;  /* Black when touched */
         }
         #loading {
-    display: none;
-    text-align: center;
-    font-weight: bold;
-    color: #dbdbdb;
-    font-size: 1em;
-    margin-top: -4px;
-    margin-bottom: 8px;
-}
+            display: none;
+            text-align: center;
+            font-weight: bold;
+            color: #ffde21;
+            font-size: 1em;
+            margin-top: -4px;
+            margin-bottom: 8px;
+        }
         .table-container {
             overflow-x: auto;
             max-width: 100%;
@@ -136,23 +136,23 @@
             background-color: #222;
         }
         .end-btn {
-    background-color: #1a5178; /* blue */
-    color: #fff;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    width: 35px;
-    height: 19px;
-    line-height: 19px;
-    display: inline-block;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    margin-right: 10px;
-}
-.end-btn:hover {
-    background-color: #222;
-}
+            background-color: #1a5178; /* blue */
+            color: #fff;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            width: 35px;
+            height: 19px;
+            line-height: 19px;
+            display: inline-block;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .end-btn:hover {
+            background-color: #222;
+        }
         .active-row {
             border: 3px solid #53a642;
 }
@@ -198,15 +198,15 @@
                 text-align: left;
             }
             td:last-child {
-    border-bottom: 0;
-    padding-left: 0;
-    text-align: center;
-    padding: 3px 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px; /* Space for easy tapping */
-}
+                border-bottom: 0;
+                padding-left: 0;
+                text-align: center;
+                padding: 3px 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px; /* Space for easy tapping */
+            }
             .active-row {
                 border: 2px solid green;
             }
@@ -326,22 +326,30 @@
                     });
             }
         }
-function endSession(start) {
-    const params = `?action=end_session&start=${encodeURIComponent(start)}`;
-    document.getElementById('loading').style.display = 'block';
-    fetch(scriptURL + params)
-        .then(response => response.json())
-        .then(data => {
-            currentData = data;
-            renderTable();
-            document.getElementById('loading').style.display = 'none';
-        })
-        .catch(error => {
-            console.error('End session error:', error);
-            alert('Error ending session.');
-            document.getElementById('loading').style.display = 'none';
-        });
-}
+        function endSession(start) {
+            // Remove green border from the row immediately
+            const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
+            for (const row of rows) {
+                if (row.getAttribute('data-start') === start) {
+                    row.classList.remove('active-row');
+                    break;
+                }
+            }
+            const params = `?action=end_session&start=${encodeURIComponent(start)}`;
+            document.getElementById('loading').style.display = 'block';
+            fetch(scriptURL + params)
+                .then(response => response.json())
+                .then(data => {
+                    currentData = data;
+                    renderTable();
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('End session error:', error);
+                    alert('Error ending session.');
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
         function renderTable() {
             const tbody = document.querySelector('#statusTable tbody');
             tbody.innerHTML = '';
@@ -369,17 +377,18 @@ function endSession(start) {
                 const formattedEnd = `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
                 
                 const row = document.createElement('tr');
-                row.className = rowClass;
-                row.innerHTML = `
-    <td data-label="Name">${entry.Name}</td>
-    <td data-label="Start">${formattedStart}</td>
-    <td data-label="End">${formattedEnd}</td>
-    <td data-label="Time Left">${left}</td>
-   <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
-`;
-                tbody.appendChild(row);
-            });
-        }
+                    row.className = rowClass;
+                    row.setAttribute('data-start', entry.Start); // Add for row identification
+                    row.innerHTML = `
+                        <td data-label="Name">${entry.Name}</td>
+                        <td data-label="Start">${formattedStart}</td>
+                        <td data-label="End">${formattedEnd}</td>
+                        <td data-label="Time Left">${left}</td>
+                        <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    `;
+                    tbody.appendChild(row);
+                    });
+                }
 
         // Load last name from localStorage
         const lastName = localStorage.getItem('lastName');
