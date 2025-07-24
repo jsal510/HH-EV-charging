@@ -154,7 +154,7 @@
             text-align: center;
             font-size: 12px;
             font-weight: bold;
-            margin-right: 10px;
+            margin-left: 10px; /* Changed to space after X */
         }
         .end-btn:hover {
             background-color: #444;
@@ -407,7 +407,7 @@
                         <td data-label="Start">${formattedStart}</td>
                         <td data-label="End">${formattedEnd}</td>
                         <td data-label="Time Left">${left}</td>
-                        <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                        <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button>${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}</td>
                     `;
                     tbody.appendChild(row);
                     });
