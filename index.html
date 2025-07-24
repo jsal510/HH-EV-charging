@@ -160,7 +160,6 @@
         .end-btn:hover {
             background-color: #444;
         }
-        }
         .active-row {
             border: 3px solid #53a642;
 }
@@ -410,6 +409,7 @@
                         <td data-label="End">${formattedEnd}</td>
                         <td data-label="Time Left">${left}</td>
                         <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+                    `;
                     tbody.appendChild(row);
                     });
                 }
