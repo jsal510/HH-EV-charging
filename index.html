@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* JULY 23 2025, 10:09 PM VERSION */
+        /* JULY 23 2025, 10:22 PM VERSION */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 12px;
@@ -326,7 +326,22 @@
                     });
             }
         }
-
+function endSession(start) {
+    const params = `?action=end_session&start=${encodeURIComponent(start)}`;
+    document.getElementById('loading').style.display = 'block';
+    fetch(scriptURL + params)
+        .then(response => response.json())
+        .then(data => {
+            currentData = data;
+            renderTable();
+            document.getElementById('loading').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('End session error:', error);
+            alert('Error ending session.');
+            document.getElementById('loading').style.display = 'none';
+        });
+}
         function renderTable() {
             const tbody = document.querySelector('#statusTable tbody');
             tbody.innerHTML = '';
@@ -360,7 +375,7 @@
     <td data-label="Start">${formattedStart}</td>
     <td data-label="End">${formattedEnd}</td>
     <td data-label="Time Left">${left}</td>
-    <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+   <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
 `;
                 tbody.appendChild(row);
             });
