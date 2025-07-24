@@ -339,14 +339,14 @@
             }
         }
         function endSession(start) {
-            // Remove green border and set Time Left to "0 mins" immediately
+            // Remove green border and set Time Left to "DELETING" immediately
             const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
             for (const row of rows) {
                 if (row.getAttribute('data-start') === start) {
                     row.classList.remove('active-row');
                     const timeLeftCell = row.querySelector('td[data-label="Time Left"]');
                     if (timeLeftCell) {
-                        timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">0</b> mins';
+                        timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">DELETING</b>';
                     }
                     break;
                 }
