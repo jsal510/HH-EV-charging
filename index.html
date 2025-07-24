@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* JULY 23 2025, 10:22 PM VERSION */
+        /* JULY 23 2025, 10:47 PM VERSION */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 12px;
@@ -327,17 +327,6 @@
             }
         }
 function endSession(start) {
-    // Find the row with the matching start timestamp and remove active-row class
-    const rows = document.querySelectorAll('#statusTable tbody tr');
-    rows.forEach(row => {
-        const startCell = row.querySelector('td[data-label="Start"]').innerHTML;
-        const startTime = startCell.match(/<b>(.*?)<\/b>/)[1]; // Extract time like "12:34 PM"
-        const startDate = new Date(`${startCell.match(/<span.*?>(.*?)<\/span>/)[1]} ${startTime}`);
-        if (startDate.toISOString() === start) {
-            row.classList.remove('active-row');
-        }
-    });
-    
     const params = `?action=end_session&start=${encodeURIComponent(start)}`;
     document.getElementById('loading').style.display = 'block';
     fetch(scriptURL + params)
