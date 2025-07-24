@@ -135,6 +135,24 @@
         .delete-btn:hover {
             background-color: #222;
         }
+        .end-btn {
+    background-color: #53a642; /* Green to match active-row */
+    color: #fff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 35px;
+    height: 19px;
+    line-height: 19px;
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+.end-btn:hover {
+    background-color: #222;
+}
         .active-row {
             border: 3px solid #53a642;
 }
@@ -180,11 +198,15 @@
                 text-align: left;
             }
             td:last-child {
-                border-bottom: 0;
-                padding-left: 0;  /* Remove the 50% split */
-                text-align: center;  /* Center the X horizontally */
-                padding: 3px 5px;  /* Added 3px vertical padding, kept 5px horizontal */
-            }
+    border-bottom: 0;
+    padding-left: 0;
+    text-align: center;
+    padding: 3px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Space for easy tapping */
+}
             .active-row {
                 border: 2px solid green;
             }
@@ -334,12 +356,12 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 row.innerHTML = `
-                    <td data-label="Name">${entry.Name}</td>
-                    <td data-label="Start">${formattedStart}</td>
-                    <td data-label="End">${formattedEnd}</td>
-                    <td data-label="Time Left">${left}</td>
-                    <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
-                `;
+    <td data-label="Name">${entry.Name}</td>
+    <td data-label="Start">${formattedStart}</td>
+    <td data-label="End">${formattedEnd}</td>
+    <td data-label="Time Left">${left}</td>
+    <td data-label="">${remainingMs > 0 ? `<button class="end-btn mobile-only">End</button>` : ''}<button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button></td>
+`;
                 tbody.appendChild(row);
             });
         }
