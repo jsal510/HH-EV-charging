@@ -228,7 +228,7 @@
     <h1>EV Charging Status</h1>
 <form onsubmit="submitEntry(); return false;">
     <input id="name" placeholder="Name - Vehicle Make" required>
-    <input id="hours" type="number" min="0" step="0.5" placeholder="Hours" required>
+    <input id="hours" type="number" min="0" step="0.25" placeholder="Hours" required>
     <div id="loading">- - - LOADING - - -</div>
     <button type="submit">Submit</button>
 </form>
@@ -298,7 +298,7 @@
         }
 
        function deleteEntry(start) {
-            if (confirm('Are you sure you want to delete this entry?')) {
+            if (confirm('Delete this entry?')) {
                 // Remove green border and set Time Left to "0 mins" immediately
                 const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
                 for (const row of rows) {
@@ -329,7 +329,7 @@
         }
 
         function deleteAllEntries() {
-            if (confirm('Are you sure you want to delete all entries?')) {
+            if (confirm('Delete all entries?')) {
                 const params = `?action=delete_all`;
                 document.getElementById('loading').style.display = 'block';  /* Show LOADING... on delete all */
                 fetch(scriptURL + params)
