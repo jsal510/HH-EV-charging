@@ -155,9 +155,11 @@
         .end-btn:hover {
             background-color: #444;
         }
-        .active-row {
-            background-color: #008000; /* Dark green background */
+       .active-row {
             border: 3px solid #00D100; /* Bright green 3px border */
+        }
+        .active-row td {
+            background-color: #008000; /* Dark green background for cells */
         }
         thead {
             display: none;  /* Hide header initially on desktop */
@@ -211,8 +213,10 @@
                 gap: 25px; /* Space for easy tapping */
             }
             .active-row {
-                background-color: #008000; /* Dark green background */
                 border: 3px solid #00D100; /* Bright green 3px border */
+            }
+            .active-row td {
+                background-color: #008000; /* Dark green background for cells */
             }
             .delete-all-btn {
                 margin: 10px auto 0;
