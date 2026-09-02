@@ -113,8 +113,7 @@
             margin: 0 auto;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #444;
             padding: 4px;
             text-align: center;
@@ -191,8 +190,8 @@
             display: none;
         }
 
-        /* CUSTOM 4.5 HOUR ALERT */
-        .custom-alert-overlay {
+        /* CUSTOM MODAL */
+        .custom-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -205,7 +204,7 @@
             padding: 20px;
         }
 
-        .custom-alert-box {
+        .custom-modal-box {
             width: 90%;
             max-width: 320px;
             background-color: #111;
@@ -216,29 +215,44 @@
             box-sizing: border-box;
         }
 
-        .custom-alert-message {
+        .custom-modal-message {
             color: #fff;
             font-size: 1.15em;
             font-weight: bold;
             margin-bottom: 22px;
+            line-height: 1.4;
         }
 
-        .custom-alert-button {
+        .custom-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .custom-modal-button {
             background-color: #1a5178;
             color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 18px;
             cursor: pointer;
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
             width: auto;
-            min-width: 100px;
+            min-width: 95px;
             font-size: 1em;
             text-transform: uppercase;
         }
 
-        .custom-alert-button:hover {
+        .custom-modal-button:hover {
             background-color: #444;
+        }
+
+        .custom-modal-cancel {
+            background-color: #444;
+        }
+
+        .custom-modal-delete {
+            background-color: #a33131;
         }
 
         @media (min-width: 601px) {
@@ -344,19 +358,30 @@
     <button class="delete-all-btn" onclick="deleteAllEntries()">Delete All</button>
 
 
-    <!-- CUSTOM ALERT -->
-    <div id="customAlert" class="custom-alert-overlay">
-        <div class="custom-alert-box">
-            <div class="custom-alert-message">
-                Max Time of 4.5 hrs.
+    <!-- CUSTOM MODAL -->
+    <div id="customModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+
+            <div id="customModalMessage" class="custom-modal-message"></div>
+
+            <div class="custom-modal-buttons">
+
+                <button
+                    id="customModalCancel"
+                    type="button"
+                    class="custom-modal-button custom-modal-cancel">
+                    Cancel
+                </button>
+
+                <button
+                    id="customModalConfirm"
+                    type="button"
+                    class="custom-modal-button">
+                    OK
+                </button>
+
             </div>
 
-            <button
-                type="button"
-                class="custom-alert-button"
-                onclick="closeCustomAlert()">
-                OK
-            </button>
         </div>
     </div>
 
@@ -367,20 +392,105 @@
 
         let currentData = [];
 
+        let modalConfirmAction = null;
+        let modalCancelAction = null;
 
-        function showCustomAlert() {
-            document.getElementById('customAlert').style.display = 'flex';
+
+        function showAlert(message, buttonText = 'OK') {
+
+            const modal = document.getElementById('customModal');
+            const messageBox = document.getElementById('customModalMessage');
+            const confirmButton = document.getElementById('customModalConfirm');
+            const cancelButton = document.getElementById('customModalCancel');
+
+            messageBox.textContent = message;
+
+            cancelButton.style.display = 'none';
+
+            confirmButton.textContent = buttonText;
+            confirmButton.className = 'custom-modal-button';
+
+            modalConfirmAction = function() {
+                closeModal();
+            };
+
+            modalCancelAction = null;
+
+            modal.style.display = 'flex';
         }
 
 
-        function closeCustomAlert() {
-            document.getElementById('customAlert').style.display = 'none';
+        function showConfirm(message, confirmText, onConfirm, danger = false) {
+
+            const modal = document.getElementById('customModal');
+            const messageBox = document.getElementById('customModalMessage');
+            const confirmButton = document.getElementById('customModalConfirm');
+            const cancelButton = document.getElementById('customModalCancel');
+
+            messageBox.textContent = message;
+
+            cancelButton.style.display = 'inline-block';
+            cancelButton.textContent = 'Cancel';
+
+            confirmButton.textContent = confirmText;
+
+            if (danger) {
+                confirmButton.className = 'custom-modal-button custom-modal-delete';
+            } else {
+                confirmButton.className = 'custom-modal-button';
+            }
+
+            modalConfirmAction = function() {
+                closeModal();
+                onConfirm();
+            };
+
+            modalCancelAction = function() {
+                closeModal();
+            };
+
+            modal.style.display = 'flex';
         }
 
 
-        document.getElementById('customAlert').addEventListener('click', function(event) {
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+
+            modalConfirmAction = null;
+            modalCancelAction = null;
+        }
+
+
+        document.getElementById('customModalConfirm').addEventListener('click', function() {
+
+            if (modalConfirmAction) {
+                const action = modalConfirmAction;
+                action();
+            }
+        });
+
+
+        document.getElementById('customModalCancel').addEventListener('click', function() {
+
+            if (modalCancelAction) {
+                const action = modalCancelAction;
+                action();
+            } else {
+                closeModal();
+            }
+        });
+
+
+        document.getElementById('customModal').addEventListener('click', function(event) {
+
             if (event.target === this) {
-                closeCustomAlert();
+
+                if (modalCancelAction) {
+                    const action = modalCancelAction;
+                    action();
+                } else {
+                    closeModal();
+                }
             }
         });
 
@@ -390,7 +500,9 @@
             document.getElementById('loading').style.display = 'block';
 
             fetch(scriptURL)
+
                 .then(response => response.json())
+
                 .then(data => {
 
                     currentData = data;
@@ -403,6 +515,7 @@
 
                     document.getElementById('loading').style.display = 'none';
                 })
+
                 .catch(error => {
 
                     console.error('Error loading data:', error);
@@ -423,7 +536,7 @@
 
             if (!name || isNaN(hours) || hours <= 0) {
 
-                alert('Please enter a valid Name and Hours > 0.');
+                showAlert('Please enter a valid Name and Hours > 0.');
 
                 return;
             }
@@ -431,7 +544,7 @@
 
             if (hours > 4.5) {
 
-                showCustomAlert();
+                showAlert('Max Time of 4.5 hrs.');
 
                 return;
             }
@@ -448,7 +561,9 @@
 
 
             fetch(scriptURL + params)
+
                 .then(response => response.json())
+
                 .then(data => {
 
                     currentData = data;
@@ -459,11 +574,12 @@
 
                     document.getElementById('hours').value = '';
                 })
+
                 .catch(error => {
 
                     console.error('Fetch error:', error);
 
-                    alert('Error submitting entry. Check console for details.');
+                    showAlert('Error submitting entry. Check console for details.');
 
                     document.getElementById('loading').style.display = 'none';
                 });
@@ -472,92 +588,116 @@
 
         function deleteEntry(start) {
 
-            if (confirm('Delete this entry?')) {
+            showConfirm(
 
-                const rows =
-                    document.querySelectorAll('#statusTable tbody tr[data-start]');
+                'Delete this entry?',
 
+                'Delete',
 
-                for (const row of rows) {
+                function() {
 
-                    if (row.getAttribute('data-start') === start) {
-
-                        row.classList.remove('active-row');
-
-                        const timeLeftCell =
-                            row.querySelector('td[data-label="Time Left"]');
+                    const rows =
+                        document.querySelectorAll('#statusTable tbody tr[data-start]');
 
 
-                        if (timeLeftCell) {
+                    for (const row of rows) {
 
-                            timeLeftCell.innerHTML =
-                                '<b style="font-size: 1.5em;">DELETING</b>';
+                        if (row.getAttribute('data-start') === start) {
+
+                            row.classList.remove('active-row');
+
+                            const timeLeftCell =
+                                row.querySelector('td[data-label="Time Left"]');
+
+
+                            if (timeLeftCell) {
+
+                                timeLeftCell.innerHTML =
+                                    '<b style="font-size: 1.5em;">DELETING</b>';
+                            }
+
+                            break;
                         }
-
-                        break;
                     }
-                }
 
 
-                const params =
-                    `?action=delete&start=${encodeURIComponent(start)}`;
+                    const params =
+                        `?action=delete&start=${encodeURIComponent(start)}`;
 
 
-                document.getElementById('loading').style.display = 'block';
+                    document.getElementById('loading').style.display = 'block';
 
 
-                fetch(scriptURL + params)
-                    .then(response => response.json())
-                    .then(data => {
+                    fetch(scriptURL + params)
 
-                        currentData = data;
+                        .then(response => response.json())
 
-                        renderTable();
+                        .then(data => {
 
-                        document.getElementById('loading').style.display = 'none';
-                    })
-                    .catch(error => {
+                            currentData = data;
 
-                        console.error('Delete error:', error);
+                            renderTable();
 
-                        alert('Error deleting entry. Check console for details.');
+                            document.getElementById('loading').style.display = 'none';
+                        })
 
-                        document.getElementById('loading').style.display = 'none';
-                    });
-            }
+                        .catch(error => {
+
+                            console.error('Delete error:', error);
+
+                            showAlert('Error deleting entry. Check console for details.');
+
+                            document.getElementById('loading').style.display = 'none';
+                        });
+                },
+
+                true
+            );
         }
 
 
         function deleteAllEntries() {
 
-            if (confirm('Delete all entries?')) {
+            showConfirm(
 
-                const params =
-                    `?action=delete_all`;
+                'Delete all entries?',
+
+                'Delete All',
+
+                function() {
+
+                    const params =
+                        `?action=delete_all`;
 
 
-                document.getElementById('loading').style.display = 'block';
+                    document.getElementById('loading').style.display = 'block';
 
 
-                fetch(scriptURL + params)
-                    .then(response => response.json())
-                    .then(data => {
+                    fetch(scriptURL + params)
 
-                        currentData = data;
+                        .then(response => response.json())
 
-                        renderTable();
+                        .then(data => {
 
-                        document.getElementById('loading').style.display = 'none';
-                    })
-                    .catch(error => {
+                            currentData = data;
 
-                        console.error('Delete all error:', error);
+                            renderTable();
 
-                        alert('Error deleting all entries. Check console for details.');
+                            document.getElementById('loading').style.display = 'none';
+                        })
 
-                        document.getElementById('loading').style.display = 'none';
-                    });
-            }
+                        .catch(error => {
+
+                            console.error('Delete all error:', error);
+
+                            showAlert('Error deleting all entries. Check console for details.');
+
+                            document.getElementById('loading').style.display = 'none';
+                        });
+                },
+
+                true
+            );
         }
 
 
@@ -596,7 +736,9 @@
 
 
             fetch(scriptURL + params)
+
                 .then(response => response.json())
+
                 .then(data => {
 
                     currentData = data;
@@ -605,11 +747,12 @@
 
                     document.getElementById('loading').style.display = 'none';
                 })
+
                 .catch(error => {
 
                     console.error('End session error:', error);
 
-                    alert('Error ending session.');
+                    showAlert('Error ending session.');
 
                     document.getElementById('loading').style.display = 'none';
                 });
