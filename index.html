@@ -861,11 +861,12 @@
                         event.preventDefault();
 
                         /*
-                            Same behavior as tapping
-                            the blue SUBMIT button.
+                            Return / Done ONLY closes
+                            the keyboard now.
+                            It does NOT submit.
                         */
 
-                        submitEntry();
+                        this.blur();
 
                     }
 
