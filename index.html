@@ -12,6 +12,7 @@
             background-color: #222;
             color: #fff;
         }
+
         h1 {
             margin-top: 8px;
             font-weight: bold;
@@ -19,12 +20,14 @@
             margin-bottom: 15px;
             color: #fff;
         }
+
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 15px;
         }
+
         input {
             margin-bottom: 12px;
             padding: 8px;
@@ -36,18 +39,21 @@
             width: 90%;
             max-width: 250px;
             font-weight: bold;
-            font-size: 1.1em;  /* Added to explicitly set font size, default is 16px */
-        }  /* End of input block */
-        input[type="number"] {
-            -moz-appearance: textfield;  /* Firefox: Hides spinners */
+            font-size: 1.1em;
         }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;  /* Chrome, Safari, Edge: Hides spinners */
+            -webkit-appearance: none;
             margin: 0;
-        }  /* End of spinner removal rules */
-       button {
-            background-color: #1a5178;  /* Dark blue */
+        }
+
+        button {
+            background-color: #1a5178;
             color: #fff;
             border: none;
             padding: 17px 17px;
@@ -58,12 +64,14 @@
             max-width: 125px;
             font-size: 1.1em;
             text-transform: uppercase;
-            }
+        }
+
         button:hover {
             background-color: #444;
         }
+
         .delete-all-btn {
-            background-color: #a33131;  /* Red */
+            background-color: #a33131;
             color: #fff;
             border: none;
             padding: 7px 10px;
@@ -71,15 +79,17 @@
             font-family: 'Roboto', sans-serif;
             width: 80%;
             max-width: 125px;
-            margin: 10px auto 0; /* Increased top margin to move button down */
+            margin: 10px auto 0;
             display: block;
             font-size: 0.8em;
             text-transform: uppercase;
             margin-bottom: 15px;
         }
+
         .delete-all-btn:hover {
             background-color: #444;
         }
+
         #loading {
             display: none;
             text-align: center;
@@ -89,39 +99,49 @@
             margin-top: -4px;
             margin-bottom: 8px;
         }
+
         .table-container {
             overflow-x: auto;
             max-width: 100%;
-            margin-bottom: 100px; /* Adds space below the table to push the Delete All button down */
+            margin-bottom: 100px;
         }
+
         table {
             width: 100%;
             max-width: 800px;
             border-collapse: collapse;
             margin: 0 auto;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #444;
             padding: 4px;
             text-align: center;
         }
+
         th {
             background-color: #333;
         }
+
         td {
             background-color: #222;
         }
-         td[data-label="Time Left"] {
+
+        td[data-label="Time Left"] {
             vertical-align: middle;
-         }
-         td[data-label="Name"] {
+        }
+
+        td[data-label="Name"] {
             font-weight: bold;
         }
+
         .time-left-header {
             font-size: .9em;
         }
+
         .delete-btn {
-            background-color: #a33131;  /* Red */
+            background-color: #a33131;
             color: #fff;
             border: none;
             padding: 0;
@@ -132,13 +152,15 @@
             display: inline-block;
             text-align: center;
             font-size: 13px;
-            font-weight: bold;  /* Added to bold the X */
+            font-weight: bold;
         }
+
         .delete-btn:hover {
             background-color: #444;
         }
+
         .end-btn {
-            background-color: #1a5178; /* blue */
+            background-color: #1a5178;
             color: #fff;
             border: none;
             padding: 0;
@@ -150,40 +172,100 @@
             text-align: center;
             font-size: 13px;
             font-weight: bold;
-            margin-left: 0px; /* Changed to space after X */
+            margin-left: 0px;
         }
+
         .end-btn:hover {
             background-color: #444;
         }
-       .active-row {
-            border: 3px solid #67bd4b; /* Bright green 3px border */
+
+        .active-row {
+            border: 3px solid #67bd4b;
         }
+
         .active-row td {
-            background-color: #243b1d; /* Dark green background for cells */
+            background-color: #243b1d;
         }
+
         thead {
-            display: none;  /* Hide header initially on desktop */
+            display: none;
         }
+
+        /* CUSTOM 4.5 HOUR ALERT */
+        .custom-alert-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .custom-alert-box {
+            width: 90%;
+            max-width: 320px;
+            background-color: #111;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 25px 20px 20px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .custom-alert-message {
+            color: #fff;
+            font-size: 1.15em;
+            font-weight: bold;
+            margin-bottom: 22px;
+        }
+
+        .custom-alert-button {
+            background-color: #1a5178;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            width: auto;
+            min-width: 100px;
+            font-size: 1em;
+            text-transform: uppercase;
+        }
+
+        .custom-alert-button:hover {
+            background-color: #444;
+        }
+
         @media (min-width: 601px) {
             thead[data-loaded="true"] {
-                display: table-header-group;  /* Show header on desktop after data loads */
+                display: table-header-group;
             }
         }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5em;
             }
+
             table {
                 border: 0;
             }
+
             thead {
                 display: none;
             }
+
             tr {
                 margin-bottom: 10px;
                 display: block;
                 border: 1px solid #555;
             }
+
             td {
                 display: block;
                 text-align: right;
@@ -191,17 +273,19 @@
                 border-bottom: 1px dotted #555;
                 position: relative;
                 padding-left: 50%;
-                padding-right: 15px;  /* Added right padding for values */
+                padding-right: 15px;
             }
+
             td:before {
                 content: attr(data-label);
                 position: absolute;
                 left: 0;
                 width: 50%;
-                padding-left: 15px;  /* Increased from 15px to add more left padding for labels */
+                padding-left: 15px;
                 font-weight: bold;
                 text-align: left;
             }
+
             td:last-child {
                 border-bottom: 0;
                 padding-left: 0;
@@ -210,28 +294,37 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 25px; /* Space for easy tapping */
+                gap: 25px;
             }
+
             .active-row {
-                border: 3px solid #67bd4b; /* Bright green 3px border */
+                border: 3px solid #67bd4b;
             }
+
             .active-row td {
-                background-color: #243b1d; /* Dark green background for cells */
+                background-color: #243b1d;
             }
+
             .delete-all-btn {
                 margin: 10px auto 0;
             }
         }
     </style>
 </head>
+
 <body>
+
     <h1>EV Charging Status</h1>
-<form onsubmit="submitEntry(); return false;">
-    <input id="name" placeholder="Name - Vehicle Make" required>
-    <input id="hours" type="number" min="0" step="0.25" placeholder="Hours" required>
-    <div id="loading">- - - LOADING - - -</div>
-    <button type="submit">Submit</button>
-</form>
+
+    <form onsubmit="submitEntry(); return false;">
+        <input id="name" placeholder="Name - Vehicle Make" required>
+        <input id="hours" type="number" min="0" step="0.25" placeholder="Hours" required>
+
+        <div id="loading">- - - LOADING - - -</div>
+
+        <button type="submit">Submit</button>
+    </form>
+
     <div class="table-container">
         <table id="statusTable">
             <thead>
@@ -243,189 +336,445 @@
                     <th></th>
                 </tr>
             </thead>
+
             <tbody></tbody>
         </table>
     </div>
+
     <button class="delete-all-btn" onclick="deleteAllEntries()">Delete All</button>
 
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
-        let currentData = [];  // Store data for dynamic updates
 
-       function loadData() {
-                        document.getElementById('loading').style.display = 'block';  /* Show LOADING... on load/refresh */
+    <!-- CUSTOM ALERT -->
+    <div id="customAlert" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <div class="custom-alert-message">
+                Max Time of 4.5 hrs.
+            </div>
+
+            <button
+                type="button"
+                class="custom-alert-button"
+                onclick="closeCustomAlert()">
+                OK
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
+
+        let currentData = [];
+
+
+        function showCustomAlert() {
+            document.getElementById('customAlert').style.display = 'flex';
+        }
+
+
+        function closeCustomAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+        }
+
+
+        document.getElementById('customAlert').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCustomAlert();
+            }
+        });
+
+
+        function loadData() {
+
+            document.getElementById('loading').style.display = 'block';
+
             fetch(scriptURL)
                 .then(response => response.json())
                 .then(data => {
+
                     currentData = data;
+
                     renderTable();
-                    document.querySelector('thead').setAttribute('data-loaded', 'true');  /* Show header on desktop after load */
-                    document.getElementById('loading').style.display = 'none';  /* Hide after load */
+
+                    document
+                        .querySelector('thead')
+                        .setAttribute('data-loaded', 'true');
+
+                    document.getElementById('loading').style.display = 'none';
                 })
                 .catch(error => {
+
                     console.error('Error loading data:', error);
-                    document.getElementById('loading').style.display = 'none';  /* Hide on error */
+
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
+
         function submitEntry() {
-            const name = document.getElementById('name').value.trim();
-            const hours = parseFloat(document.getElementById('hours').value.trim());
+
+            const name =
+                document.getElementById('name').value.trim();
+
+            const hours =
+                parseFloat(document.getElementById('hours').value.trim());
+
+
             if (!name || isNaN(hours) || hours <= 0) {
+
                 alert('Please enter a valid Name and Hours > 0.');
+
                 return;
             }
+
+
             if (hours > 4.5) {
-                alert('Max Time of 4.5 hrs.');
+
+                showCustomAlert();
+
                 return;
             }
+
+
             localStorage.setItem('lastName', name);
-            const params = `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
-            document.getElementById('loading').style.display = 'block';  /* Show LOADING... on submit */
+
+
+            const params =
+                `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
+
+
+            document.getElementById('loading').style.display = 'block';
+
+
             fetch(scriptURL + params)
                 .then(response => response.json())
                 .then(data => {
+
                     currentData = data;
+
                     renderTable();
-                    document.getElementById('loading').style.display = 'none';  /* Hide after submit */
+
+                    document.getElementById('loading').style.display = 'none';
+
                     document.getElementById('hours').value = '';
                 })
                 .catch(error => {
+
                     console.error('Fetch error:', error);
+
                     alert('Error submitting entry. Check console for details.');
-                    document.getElementById('loading').style.display = 'none';  /* Hide on error */
+
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
-       function deleteEntry(start) {
+
+        function deleteEntry(start) {
+
             if (confirm('Delete this entry?')) {
-                // Remove green border and set Time Left to "0 mins" immediately
-                const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
+
+                const rows =
+                    document.querySelectorAll('#statusTable tbody tr[data-start]');
+
+
                 for (const row of rows) {
+
                     if (row.getAttribute('data-start') === start) {
+
                         row.classList.remove('active-row');
-                        const timeLeftCell = row.querySelector('td[data-label="Time Left"]');
+
+                        const timeLeftCell =
+                            row.querySelector('td[data-label="Time Left"]');
+
+
                         if (timeLeftCell) {
-                            timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">DELETING</b>';
+
+                            timeLeftCell.innerHTML =
+                                '<b style="font-size: 1.5em;">DELETING</b>';
                         }
+
                         break;
                     }
                 }
-                const params = `?action=delete&start=${encodeURIComponent(start)}`;
-                document.getElementById('loading').style.display = 'block';  /* Show LOADING... on delete entry */
+
+
+                const params =
+                    `?action=delete&start=${encodeURIComponent(start)}`;
+
+
+                document.getElementById('loading').style.display = 'block';
+
+
                 fetch(scriptURL + params)
                     .then(response => response.json())
                     .then(data => {
+
                         currentData = data;
+
                         renderTable();
-                        document.getElementById('loading').style.display = 'none';  /* Hide after delete */
+
+                        document.getElementById('loading').style.display = 'none';
                     })
                     .catch(error => {
+
                         console.error('Delete error:', error);
+
                         alert('Error deleting entry. Check console for details.');
-                        document.getElementById('loading').style.display = 'none';  /* Hide on error */
+
+                        document.getElementById('loading').style.display = 'none';
                     });
             }
         }
 
+
         function deleteAllEntries() {
+
             if (confirm('Delete all entries?')) {
-                const params = `?action=delete_all`;
-                document.getElementById('loading').style.display = 'block';  /* Show LOADING... on delete all */
+
+                const params =
+                    `?action=delete_all`;
+
+
+                document.getElementById('loading').style.display = 'block';
+
+
                 fetch(scriptURL + params)
                     .then(response => response.json())
                     .then(data => {
+
                         currentData = data;
+
                         renderTable();
-                        document.getElementById('loading').style.display = 'none';  /* Hide after delete all */
+
+                        document.getElementById('loading').style.display = 'none';
                     })
                     .catch(error => {
+
                         console.error('Delete all error:', error);
+
                         alert('Error deleting all entries. Check console for details.');
-                        document.getElementById('loading').style.display = 'none';  /* Hide on error */
+
+                        document.getElementById('loading').style.display = 'none';
                     });
             }
         }
+
+
         function endSession(start) {
-            // Remove green border and set Time Left to "DELETING" immediately
-            const rows = document.querySelectorAll('#statusTable tbody tr[data-start]');
+
+            const rows =
+                document.querySelectorAll('#statusTable tbody tr[data-start]');
+
+
             for (const row of rows) {
+
                 if (row.getAttribute('data-start') === start) {
+
                     row.classList.remove('active-row');
-                    const timeLeftCell = row.querySelector('td[data-label="Time Left"]');
+
+                    const timeLeftCell =
+                        row.querySelector('td[data-label="Time Left"]');
+
+
                     if (timeLeftCell) {
-                        //timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">0</b> mins';
-                        timeLeftCell.innerHTML = '<b style="font-size: 1.5em;">ENDING</b>';
+
+                        timeLeftCell.innerHTML =
+                            '<b style="font-size: 1.5em;">ENDING</b>';
                     }
+
                     break;
                 }
             }
-            const params = `?action=end_session&start=${encodeURIComponent(start)}`;
+
+
+            const params =
+                `?action=end_session&start=${encodeURIComponent(start)}`;
+
+
             document.getElementById('loading').style.display = 'block';
+
+
             fetch(scriptURL + params)
                 .then(response => response.json())
                 .then(data => {
+
                     currentData = data;
+
                     renderTable();
+
                     document.getElementById('loading').style.display = 'none';
                 })
                 .catch(error => {
+
                     console.error('End session error:', error);
+
                     alert('Error ending session.');
+
                     document.getElementById('loading').style.display = 'none';
                 });
         }
+
+
         function renderTable() {
-            const tbody = document.querySelector('#statusTable tbody');
+
+            const tbody =
+                document.querySelector('#statusTable tbody');
+
+
             tbody.innerHTML = '';
+
+
             const now = new Date();
+
+
             currentData.forEach(entry => {
-                const startDate = new Date(entry.Start);
-                const endDate = new Date(entry.End);
-                let remainingMs = endDate - now;
-                let left = 'Session Ended';
-                let rowClass = '';
+
+                const startDate =
+                    new Date(entry.Start);
+
+                const endDate =
+                    new Date(entry.End);
+
+
+                let remainingMs =
+                    endDate - now;
+
+
+                let left =
+                    'Session Ended';
+
+
+                let rowClass =
+                    '';
+
+
                 if (remainingMs > 0) {
-                    const hoursLeft = Math.floor(remainingMs / 3600000);
-                    const minsLeft = Math.floor((remainingMs % 3600000) / 60000);
-                    left = `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr  `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
-                    rowClass = 'active-row';
+
+                    const hoursLeft =
+                        Math.floor(remainingMs / 3600000);
+
+
+                    const minsLeft =
+                        Math.floor((remainingMs % 3600000) / 60000);
+
+
+                    left =
+                        `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr  `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
+
+
+                    rowClass =
+                        'active-row';
+
                 } else {
-                    left = '<b>Session Ended</b>';
-                }
-                const timeStart = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const dateStart = startDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedStart = `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
-                
-                const timeEnd = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const dateEnd = endDate.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-                const formattedEnd = `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
-                
-                const row = document.createElement('tr');
-                    row.className = rowClass;
-                    row.setAttribute('data-start', entry.Start); // Add for row identification
-                    row.innerHTML = `
-                        <td data-label="Name">${entry.Name}</td>
-                        <td data-label="Start">${formattedStart}</td>
-                        <td data-label="End">${formattedEnd}</td>
-                        <td data-label="Time Left">${left}</td>
-                        <td data-label=""><button class="delete-btn" onclick="deleteEntry('${entry.Start}')">X</button>${remainingMs > 0 ? `<button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">End</button>` : ''}</td>
-                    `;
-                    tbody.appendChild(row);
-                    });
+
+                    left =
+                        '<b>Session Ended</b>';
                 }
 
-        // Load last name from localStorage
-        const lastName = localStorage.getItem('lastName');
-        if (lastName) {
-            document.getElementById('name').value = lastName;
+
+                const timeStart =
+                    startDate.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+
+                const dateStart =
+                    startDate.toLocaleDateString([], {
+                        month: 'numeric',
+                        day: 'numeric'
+                    });
+
+
+                const formattedStart =
+                    `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
+
+
+                const timeEnd =
+                    endDate.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+
+                const dateEnd =
+                    endDate.toLocaleDateString([], {
+                        month: 'numeric',
+                        day: 'numeric'
+                    });
+
+
+                const formattedEnd =
+                    `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
+
+
+                const row =
+                    document.createElement('tr');
+
+
+                row.className =
+                    rowClass;
+
+
+                row.setAttribute(
+                    'data-start',
+                    entry.Start
+                );
+
+
+                row.innerHTML = `
+                    <td data-label="Name">${entry.Name}</td>
+
+                    <td data-label="Start">${formattedStart}</td>
+
+                    <td data-label="End">${formattedEnd}</td>
+
+                    <td data-label="Time Left">${left}</td>
+
+                    <td data-label="">
+                        <button
+                            class="delete-btn"
+                            onclick="deleteEntry('${entry.Start}')">
+                            X
+                        </button>
+
+                        ${
+                            remainingMs > 0
+                                ? `<button
+                                       class="end-btn mobile-only"
+                                       onclick="endSession('${entry.Start}')">
+                                       End
+                                   </button>`
+                                : ''
+                        }
+                    </td>
+                `;
+
+
+                tbody.appendChild(row);
+            });
         }
 
-        // Initial load
+
+        const lastName =
+            localStorage.getItem('lastName');
+
+
+        if (lastName) {
+
+            document.getElementById('name').value =
+                lastName;
+        }
+
+
         loadData();
+
 
         // Auto-refresh data and update "Time Left" every 10 seconds
         //setInterval(loadData, 10000);
+
     </script>
+
 </body>
 </html>
