@@ -1,581 +1,439 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EV Charging Status</title>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-        rel="stylesheet">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <style>
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 12px;
-            background-color: #222;
-            color: #fff;
-        }
-
-        h1 {
-            margin-top: 8px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        input {
-            margin-bottom: 12px;
-            padding: 8px;
-            font-family: 'Roboto', sans-serif;
-            background-color: #444;
-            color: #fff;
-            border: 1px solid #444;
-            text-align: center;
-            width: 90%;
-            max-width: 250px;
-            font-weight: bold;
-            font-size: 1.1em;
-            box-sizing: border-box;
-        }
-
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        button {
-            background-color: #1a5178;
-            color: #fff;
-            border: none;
-            padding: 17px 17px;
-            cursor: pointer;
-            font-family: 'Roboto', sans-serif;
-            font-weight: bold;
-            width: 90%;
-            max-width: 125px;
-            font-size: 1.1em;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            background-color: #444;
-        }
-
-        .delete-all-btn {
-            background-color: #a33131;
-            color: #fff;
-            border: none;
-            padding: 7px 10px;
-            cursor: pointer;
-            font-family: 'Roboto', sans-serif;
-            width: 80%;
-            max-width: 125px;
-            margin: 10px auto 0;
-            display: block;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-        }
-
-        #loading {
-            display: none;
-            text-align: center;
-            font-weight: bold;
-            color: #ffde21;
-            font-size: 1.4em;
-            margin-top: -4px;
-            margin-bottom: 8px;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            max-width: 100%;
-            margin-bottom: 100px;
-        }
-
-        table {
-            width: 100%;
-            max-width: 800px;
-            border-collapse: collapse;
-            margin: 0 auto;
-        }
-
-        th,
-        td {
-            border: 1px solid #444;
-            padding: 4px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #333;
-        }
-
-        td {
-            background-color: #222;
-        }
-
-        td[data-label="Name"] {
-            font-weight: bold;
-        }
-
-        .delete-btn {
-            background-color: #a33131;
-            color: #fff;
-            border: none;
-            padding: 0;
-            width: 19px;
-            height: 19px;
-            line-height: 19px;
-            font-size: 13px;
-        }
-
-        .end-btn {
-            background-color: #1a5178;
-            color: #fff;
-            border: none;
-            padding: 0;
-            width: 45px;
-            height: 19px;
-            line-height: 19px;
-            font-size: 13px;
-        }
-
-        .active-row {
-            border: 3px solid #67bd4b;
-        }
-
-        .active-row td {
-            background-color: #243b1d;
-        }
-
-        thead {
-            display: none;
-        }
-
-
-        /* =====================================
-           HOURS / ROTB-STYLE ENTRY OVERLAY
-           ===================================== */
-
-        #hoursOverlay {
-            display: none;
-
-            position: fixed;
-
-            z-index: 9000;
-
-            background: rgba(0,0,0,.52);
-
-            backdrop-filter: blur(7px);
-            -webkit-backdrop-filter: blur(7px);
-
-            align-items: center;
-            justify-content: center;
-
-            box-sizing: border-box;
-
-            padding: 18px;
-        }
-
-
-        #hoursPopup {
-            width: 84%;
-            max-width: 310px;
-
-            background: #080808;
-
-            border: 2px solid #fff;
-            border-radius: 8px;
-
-            text-align: center;
-
-            padding: 22px 20px 20px;
-
-            box-sizing: border-box;
-        }
-
-
-        .hours-title {
-            color: #fff;
-
-            font-size: 1.45em;
-            font-weight: bold;
-
-            margin-bottom: 3px;
-        }
-
-
-        .hours-range {
-            color: #fff;
-
-            font-size: .95em;
-
-            margin-bottom: 16px;
-        }
-
-
-        #hoursPopupInput {
-            width: 100%;
-            max-width: none;
-
-            height: 58px;
-
-            margin: 0;
-
-            padding: 6px;
-
-            box-sizing: border-box;
-
-            background: #d8d8d8;
-
-            color: #111;
-
-            border: 2px solid #eee;
-            border-radius: 5px;
-
-            outline: none;
-
-            text-align: center;
-
-            font-size: 1.8em;
-            font-weight: bold;
-
-            caret-color: #111;
-        }
-
-
-        /* =====================================
-           NORMAL CUSTOM ALERTS
-           ===================================== */
-
-        .custom-modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-
-            background-color: rgba(0,0,0,.55);
-
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-
-            z-index: 9999;
-
-            align-items: center;
-            justify-content: center;
-
-            padding: 20px;
-        }
-
-        .custom-modal-box {
-            width: 90%;
-            max-width: 320px;
-
-            background-color: #111;
-
-            border: 2px solid #fff;
-            border-radius: 8px;
-
-            padding: 25px 20px 20px;
-
-            text-align: center;
-
-            box-sizing: border-box;
-        }
-
-        .custom-modal-message {
-            color: #fff;
-
-            font-size: 1.15em;
-            font-weight: bold;
-            line-height: 1.4;
-
-            margin-bottom: 22px;
-        }
-
-        .custom-modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .custom-modal-button {
-            background-color: #1a5178;
-            color: #fff;
-
-            border: none;
-
-            padding: 12px 18px;
-
-            cursor: pointer;
-
-            font-family: 'Roboto', sans-serif;
-            font-weight: bold;
-
-            width: auto;
-            min-width: 95px;
-
-            font-size: 1em;
-
-            text-transform: uppercase;
-        }
-
-        .custom-modal-cancel {
-            background-color: #444;
-        }
-
-        .custom-modal-delete {
-            background-color: #a33131;
-        }
-
-
-        @media (min-width: 601px) {
-
-            thead[data-loaded="true"] {
-                display: table-header-group;
-            }
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            table {
-                border: 0;
-            }
-
-            thead {
-                display: none;
-            }
-
-            tr {
-                margin-bottom: 10px;
-                display: block;
-                border: 1px solid #555;
-            }
-
-            td {
-                display: block;
-                text-align: right;
-                font-size: 13px;
-
-                border-bottom: 1px dotted #555;
-
-                position: relative;
-
-                padding-left: 50%;
-                padding-right: 15px;
-            }
-
-            td:before {
-                content: attr(data-label);
-
-                position: absolute;
-                left: 0;
-
-                width: 50%;
-
-                padding-left: 15px;
-
-                font-weight: bold;
-                text-align: left;
-            }
-
-            td:last-child {
-                border-bottom: 0;
-
-                padding-left: 0;
-
-                text-align: center;
-
-                padding: 3px 5px;
-
-                display: flex;
-
-                justify-content: center;
-                align-items: center;
-
-                gap: 25px;
-            }
-
-            .delete-all-btn {
-                margin: 10px auto 0;
-            }
-        }
-
-    </style>
+<title>EV Charging Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* AUG 6 1PM VERSION */
+
+body {
+font-family: 'Roboto', sans-serif;
+margin: 12px;
+background-color: #222;
+color: #fff;
+}
+
+h1 {
+margin-top: 8px;
+font-weight: bold;
+text-align: center;
+margin-bottom: 15px;
+color: #fff;
+}
+
+form {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin-bottom: 15px;
+}
+
+input {
+margin-bottom: 12px;
+padding: 8px;
+font-family: 'Roboto', sans-serif;
+background-color: #444;
+color: #fff;
+border: 1px solid #444;
+text-align: center;
+width: 90%;
+max-width: 250px;
+font-weight: bold;
+font-size: 1.1em;
+}
+
+input[type="number"] {
+-moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+button {
+background-color: #1a5178;
+color: #fff;
+border: none;
+padding: 17px 17px;
+cursor: pointer;
+font-family: 'Roboto', sans-serif;
+font-weight: bold;
+width: 90%;
+max-width: 125px;
+font-size: 1.1em;
+text-transform: uppercase;
+}
+
+button:hover {
+background-color: #444;
+}
+
+.delete-all-btn {
+background-color: #a33131;
+color: #fff;
+border: none;
+padding: 7px 10px;
+cursor: pointer;
+font-family: 'Roboto', sans-serif;
+width: 80%;
+max-width: 125px;
+margin: 10px auto 0;
+display: block;
+font-size: 0.8em;
+text-transform: uppercase;
+margin-bottom: 15px;
+}
+
+.delete-all-btn:hover {
+background-color: #444;
+}
+
+#loading {
+display: none;
+text-align: center;
+font-weight: bold;
+color: #ffde21;
+font-size: 1.4em;
+margin-top: -4px;
+margin-bottom: 8px;
+}
+
+.table-container {
+overflow-x: auto;
+max-width: 100%;
+margin-bottom: 100px;
+}
+
+table {
+width: 100%;
+max-width: 800px;
+border-collapse: collapse;
+margin: 0 auto;
+}
+
+th,
+td {
+border: 1px solid #444;
+padding: 4px;
+text-align: center;
+}
+
+th {
+background-color: #333;
+}
+
+td {
+background-color: #222;
+}
+
+td[data-label="Time Left"] {
+vertical-align: middle;
+}
+
+td[data-label="Name"] {
+font-weight: bold;
+}
+
+.time-left-header {
+font-size: .9em;
+}
+
+.delete-btn {
+background-color: #a33131;
+color: #fff;
+border: none;
+padding: 0;
+cursor: pointer;
+width: 19px;
+height: 19px;
+line-height: 19px;
+display: inline-block;
+text-align: center;
+font-size: 13px;
+font-weight: bold;
+}
+
+.delete-btn:hover {
+background-color: #444;
+}
+
+.end-btn {
+background-color: #1a5178;
+color: #fff;
+border: none;
+padding: 0;
+cursor: pointer;
+width: 45px;
+height: 19px;
+line-height: 19px;
+display: inline-block;
+text-align: center;
+font-size: 13px;
+font-weight: bold;
+margin-left: 0;
+}
+
+.end-btn:hover {
+background-color: #444;
+}
+
+.active-row {
+border: 3px solid #67bd4b;
+}
+
+.active-row td {
+background-color: #243b1d;
+}
+
+thead {
+display: none;
+}
+
+
+/* =========================
+CUSTOM MODAL
+========================= */
+
+.custom-modal-overlay {
+display: none;
+position: fixed;
+inset: 0;
+background-color: rgba(0, 0, 0, 0.55);
+backdrop-filter: blur(6px);
+-webkit-backdrop-filter: blur(6px);
+z-index: 9999;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.custom-modal-box {
+width: 90%;
+max-width: 320px;
+background-color: #111;
+border: 2px solid #fff;
+border-radius: 8px;
+padding: 25px 20px 20px;
+text-align: center;
+box-sizing: border-box;
+}
+
+.custom-modal-message {
+color: #fff;
+font-size: 1.15em;
+font-weight: bold;
+line-height: 1.4;
+margin-bottom: 22px;
+}
+
+.custom-modal-buttons {
+display: flex;
+justify-content: center;
+gap: 12px;
+}
+
+.custom-modal-button {
+background-color: #1a5178;
+color: #fff;
+border: none;
+padding: 12px 18px;
+cursor: pointer;
+font-family: 'Roboto', sans-serif;
+font-weight: bold;
+width: auto;
+min-width: 95px;
+font-size: 1em;
+text-transform: uppercase;
+}
+
+.custom-modal-button:hover {
+background-color: #444;
+}
+
+.custom-modal-cancel {
+background-color: #444;
+}
+
+.custom-modal-delete {
+background-color: #a33131;
+}
+
+
+@media (min-width: 601px) {
+thead[data-loaded="true"] {
+display: table-header-group;
+}
+}
+
+
+@media (max-width: 600px) {
+
+h1 {
+font-size: 1.5em;
+}
+
+table {
+border: 0;
+}
+
+thead {
+display: none;
+}
+
+tr {
+margin-bottom: 10px;
+display: block;
+border: 1px solid #555;
+}
+
+td {
+display: block;
+text-align: right;
+font-size: 13px;
+border-bottom: 1px dotted #555;
+position: relative;
+padding-left: 50%;
+padding-right: 15px;
+}
+
+td:before {
+content: attr(data-label);
+position: absolute;
+left: 0;
+width: 50%;
+padding-left: 15px;
+font-weight: bold;
+text-align: left;
+}
+
+td:last-child {
+border-bottom: 0;
+padding-left: 0;
+text-align: center;
+padding: 3px 5px;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 25px;
+}
+
+.active-row {
+border: 3px solid #67bd4b;
+}
+
+.active-row td {
+background-color: #243b1d;
+}
+
+.delete-all-btn {
+margin: 10px auto 0;
+}
+}
+</style>
 </head>
-
 
 <body>
 
-
 <h1>EV Charging Status</h1>
 
+<form id="chargingForm" onsubmit="submitEntry(); return false;" novalidate>
 
-<form
-    id="chargingForm"
-    onsubmit="submitEntry(); return false;"
-    novalidate>
+<input
+id="name"
+placeholder="Name - Vehicle Make">
 
+<input
+id="hours"
+type="number"
+min="0"
+step="0.25"
+inputmode="decimal"
+enterkeyhint="done"
+placeholder="Hours">
 
-    <input
-        id="name"
-        placeholder="Name - Vehicle Make">
+<div id="loading">
+- - - LOADING - - -
+</div>
 
-
-    <!--
-        DISPLAY FIELD ONLY.
-        Tapping this launches the popup.
-    -->
-
-    <input
-        id="hours"
-        type="text"
-        placeholder="Hours"
-        readonly>
-
-
-    <div id="loading">
-        - - - LOADING - - -
-    </div>
-
-
-    <button type="submit">
-        Submit
-    </button>
+<button type="submit">
+Submit
+</button>
 
 </form>
 
 
-
 <div class="table-container">
 
-    <table id="statusTable">
+<table id="statusTable">
 
-        <thead>
+<thead>
+<tr>
+<th>Name</th>
+<th>Start</th>
+<th>End</th>
+<th class="time-left-header">Time Left</th>
+<th></th>
+</tr>
+</thead>
 
-            <tr>
-                <th>Name</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Time Left</th>
-                <th></th>
-            </tr>
+<tbody></tbody>
 
-        </thead>
-
-        <tbody></tbody>
-
-    </table>
+</table>
 
 </div>
 
 
-
 <button
-    class="delete-all-btn"
-    onclick="deleteAllEntries()">
+class="delete-all-btn"
+onclick="deleteAllEntries()">
 
-    Delete All
+Delete All
 
 </button>
 
 
-
-<!-- =====================================
-     HOURS POPUP
-     ===================================== -->
-
-<div id="hoursOverlay">
-
-    <div id="hoursPopup">
-
-        <div class="hours-title">
-            HOURS
-        </div>
-
-        <div class="hours-range">
-            (.5 - 4.5)
-        </div>
-
-        <input
-            id="hoursPopupInput"
-            type="number"
-            inputmode="decimal"
-            enterkeyhint="done"
-            step="0.25">
-
-    </div>
-
-</div>
-
-
-
-<!-- =====================================
-     NORMAL CUSTOM MODAL
-     ===================================== -->
+<!-- CUSTOM MODAL -->
 
 <div
-    id="customModal"
-    class="custom-modal-overlay">
+id="customModal"
+class="custom-modal-overlay">
 
-    <div class="custom-modal-box">
+<div class="custom-modal-box">
 
-        <div
-            id="customModalMessage"
-            class="custom-modal-message">
-        </div>
+<div
+id="customModalMessage"
+class="custom-modal-message">
+</div>
 
+<div class="custom-modal-buttons">
 
-        <div class="custom-modal-buttons">
+<button
+id="customModalCancel"
+type="button"
+class="custom-modal-button custom-modal-cancel">
 
-            <button
-                id="customModalCancel"
-                type="button"
-                class="custom-modal-button custom-modal-cancel">
+Cancel
 
-                Cancel
+</button>
 
-            </button>
+<button
+id="customModalConfirm"
+type="button"
+class="custom-modal-button">
 
+OK
 
-            <button
-                id="customModalConfirm"
-                type="button"
-                class="custom-modal-button">
-
-                OK
-
-            </button>
-
-        </div>
-
-    </div>
+</button>
 
 </div>
 
+</div>
+
+</div>
 
 
 <script>
@@ -587,1336 +445,897 @@ const scriptURL =
 let currentData = [];
 
 let modalConfirmAction = null;
+
 let modalCancelAction = null;
 
-let hoursPopupOpen = false;
 
-let popupOpeningHeight = 0;
-
-
-
-const hoursField =
-    document.getElementById('hours');
-
-const hoursOverlay =
-    document.getElementById('hoursOverlay');
-
-const hoursPopup =
-    document.getElementById('hoursPopup');
-
-const hoursPopupInput =
-    document.getElementById('hoursPopupInput');
-
-
-
-/* =====================================
-   POSITION POPUP USING REAL
-   VISIBLE SCREEN ABOVE KEYBOARD
-   ===================================== */
-
-function positionHoursOverlay() {
-
-    if (!hoursPopupOpen) {
-        return;
-    }
-
-
-    if (window.visualViewport) {
-
-        const vv =
-            window.visualViewport;
-
-
-        hoursOverlay.style.left =
-            vv.offsetLeft + 'px';
-
-        hoursOverlay.style.top =
-            vv.offsetTop + 'px';
-
-        hoursOverlay.style.width =
-            vv.width + 'px';
-
-        hoursOverlay.style.height =
-            vv.height + 'px';
-
-    }
-
-    else {
-
-        hoursOverlay.style.left =
-            '0px';
-
-        hoursOverlay.style.top =
-            '0px';
-
-        hoursOverlay.style.width =
-            '100%';
-
-        hoursOverlay.style.height =
-            window.innerHeight + 'px';
-
-    }
-
-}
-
-
-
-/* =====================================
-   OPEN HOURS POPUP
-   ===================================== */
-
-function openHoursPopup() {
-
-    if (hoursPopupOpen) {
-        return;
-    }
-
-
-    hoursPopupOpen = true;
-
-
-    hoursPopupInput.value = '';
-
-
-    popupOpeningHeight =
-        window.visualViewport
-            ? window.visualViewport.height
-            : window.innerHeight;
-
-
-    hoursOverlay.style.display =
-        'flex';
-
-
-    positionHoursOverlay();
-
-
-    /*
-        Focus immediately.
-
-        This is what causes Gboard to appear.
-    */
-
-    requestAnimationFrame(
-        function() {
-
-            hoursPopupInput.focus();
-
-        }
-    );
-
-}
-
-
-
-/* =====================================
-   CLOSE HOURS POPUP
-   ===================================== */
-
-function closeHoursPopup(
-    keepTypedValue = true
-) {
-
-    if (!hoursPopupOpen) {
-        return;
-    }
-
-
-    const typed =
-        hoursPopupInput.value.trim();
-
-
-    if (
-        keepTypedValue &&
-        typed !== ''
-    ) {
-
-        hoursField.value =
-            typed;
-
-    }
-
-
-    hoursPopupOpen =
-        false;
-
-
-    hoursPopupInput.blur();
-
-
-    hoursOverlay.style.display =
-        'none';
-
-
-    hoursOverlay.style.left =
-        '0px';
-
-    hoursOverlay.style.top =
-        '0px';
-
-    hoursOverlay.style.width =
-        '100%';
-
-    hoursOverlay.style.height =
-        '100%';
-
-}
-
-
-
-/* =====================================
-   TAP HOURS FIELD
-   ===================================== */
-
-hoursField.addEventListener(
-    'click',
-    function() {
-
-        openHoursPopup();
-
-    }
-);
-
-
-
-/* =====================================
-   KEYBOARD ENTER / ARROW
-   ===================================== */
-
-hoursPopupInput.addEventListener(
-    'keydown',
-    function(event) {
-
-        if (
-            event.key === 'Enter'
-        ) {
-
-            event.preventDefault();
-
-
-            const typed =
-                hoursPopupInput.value.trim();
-
-
-            if (
-                typed !== ''
-            ) {
-
-                hoursField.value =
-                    typed;
-
-            }
-
-
-            /*
-                Close popup + keyboard.
-            */
-
-            closeHoursPopup(true);
-
-
-            /*
-                EXACT SAME BEHAVIOR
-                AS PRESSING SUBMIT.
-            */
-
-            submitEntry();
-
-        }
-
-    }
-);
-
-
-
-/* =====================================
-   TAP BLURRED AREA
-   ===================================== */
-
-hoursOverlay.addEventListener(
-    'pointerdown',
-    function(event) {
-
-        if (
-            event.target ===
-            hoursOverlay
-        ) {
-
-            /*
-                Keep anything typed.
-
-                Do NOT submit.
-            */
-
-            closeHoursPopup(true);
-
-        }
-
-    }
-);
-
-
-
-hoursPopup.addEventListener(
-    'pointerdown',
-    function(event) {
-
-        event.stopPropagation();
-
-    }
-);
-
-
-
-/* =====================================
-   WATCH GBOARD / VISUAL VIEWPORT
-   ===================================== */
-
-if (window.visualViewport) {
-
-    window.visualViewport.addEventListener(
-        'resize',
-        function() {
-
-            if (!hoursPopupOpen) {
-                return;
-            }
-
-
-            positionHoursOverlay();
-
-
-            /*
-                If Android Back closes Gboard,
-                the visual viewport suddenly
-                gets much taller again.
-
-                When that happens, close the
-                HOURS popup too.
-            */
-
-            const currentHeight =
-                window.visualViewport.height;
-
-
-            if (
-                popupOpeningHeight > 0 &&
-                currentHeight >
-                popupOpeningHeight - 40 &&
-                document.activeElement !==
-                hoursPopupInput
-            ) {
-
-                closeHoursPopup(true);
-
-            }
-
-        }
-    );
-
-
-    window.visualViewport.addEventListener(
-        'scroll',
-        function() {
-
-            positionHoursOverlay();
-
-        }
-    );
-
-}
-
-
-
-/* =====================================
-   CUSTOM ALERT
-   ===================================== */
+/* =========================
+CUSTOM ALERT
+========================= */
 
 function showAlert(
-    message,
-    buttonText = 'OK',
-    afterClose = null
+message,
+buttonText = 'OK',
+afterClose = null
 ) {
 
-    const modal =
-        document.getElementById(
-            'customModal'
-        );
+const modal =
+document.getElementById('customModal');
 
-    const messageBox =
-        document.getElementById(
-            'customModalMessage'
-        );
+const messageBox =
+document.getElementById('customModalMessage');
 
-    const confirmButton =
-        document.getElementById(
-            'customModalConfirm'
-        );
+const confirmButton =
+document.getElementById('customModalConfirm');
 
-    const cancelButton =
-        document.getElementById(
-            'customModalCancel'
-        );
+const cancelButton =
+document.getElementById('customModalCancel');
 
 
-    messageBox.textContent =
-        message;
+messageBox.textContent = message;
+
+cancelButton.style.display = 'none';
+
+confirmButton.textContent = buttonText;
+
+confirmButton.className =
+'custom-modal-button';
 
 
-    cancelButton.style.display =
-        'none';
+modalConfirmAction = function() {
+
+closeModal();
+
+if (afterClose) {
+afterClose();
+}
+
+};
 
 
-    confirmButton.textContent =
-        buttonText;
+modalCancelAction = null;
 
-
-    confirmButton.className =
-        'custom-modal-button';
-
-
-    modalConfirmAction =
-        function() {
-
-            closeModal();
-
-
-            if (afterClose) {
-
-                afterClose();
-
-            }
-
-        };
-
-
-    modalCancelAction =
-        null;
-
-
-    modal.style.display =
-        'flex';
-
+modal.style.display = 'flex';
 }
 
 
-
-/* =====================================
-   CUSTOM CONFIRM
-   ===================================== */
+/* =========================
+CUSTOM CONFIRM
+========================= */
 
 function showConfirm(
-    message,
-    confirmText,
-    onConfirm,
-    danger = false
+message,
+confirmText,
+onConfirm,
+danger = false
 ) {
 
-    const modal =
-        document.getElementById(
-            'customModal'
-        );
+const modal =
+document.getElementById('customModal');
 
-    const messageBox =
-        document.getElementById(
-            'customModalMessage'
-        );
+const messageBox =
+document.getElementById('customModalMessage');
 
-    const confirmButton =
-        document.getElementById(
-            'customModalConfirm'
-        );
+const confirmButton =
+document.getElementById('customModalConfirm');
 
-    const cancelButton =
-        document.getElementById(
-            'customModalCancel'
-        );
+const cancelButton =
+document.getElementById('customModalCancel');
 
 
-    messageBox.textContent =
-        message;
+messageBox.textContent = message;
+
+cancelButton.style.display =
+'inline-block';
+
+cancelButton.textContent =
+'Cancel';
+
+confirmButton.textContent =
+confirmText;
 
 
-    cancelButton.style.display =
-        'inline-block';
+if (danger) {
 
+confirmButton.className =
+'custom-modal-button custom-modal-delete';
 
-    cancelButton.textContent =
-        'Cancel';
+} else {
 
-
-    confirmButton.textContent =
-        confirmText;
-
-
-    confirmButton.className =
-        danger
-            ? 'custom-modal-button custom-modal-delete'
-            : 'custom-modal-button';
-
-
-    modalConfirmAction =
-        function() {
-
-            closeModal();
-
-            onConfirm();
-
-        };
-
-
-    modalCancelAction =
-        function() {
-
-            closeModal();
-
-        };
-
-
-    modal.style.display =
-        'flex';
+confirmButton.className =
+'custom-modal-button';
 
 }
 
 
+modalConfirmAction = function() {
+
+closeModal();
+
+onConfirm();
+
+};
+
+
+modalCancelAction = function() {
+
+closeModal();
+
+};
+
+
+modal.style.display = 'flex';
+}
+
+
+/* =========================
+CLOSE MODAL
+========================= */
 
 function closeModal() {
 
-    document
-        .getElementById(
-            'customModal'
-        )
-        .style.display =
-            'none';
+document.getElementById(
+'customModal'
+).style.display = 'none';
 
+modalConfirmAction = null;
 
-    modalConfirmAction =
-        null;
-
-    modalCancelAction =
-        null;
-
+modalCancelAction = null;
 }
 
 
-
 document
-    .getElementById(
-        'customModalConfirm'
-    )
-    .addEventListener(
-        'click',
-        function() {
+.getElementById('customModalConfirm')
+.addEventListener(
+'click',
+function() {
 
-            if (
-                modalConfirmAction
-            ) {
+if (modalConfirmAction) {
 
-                const action =
-                    modalConfirmAction;
+const action =
+modalConfirmAction;
 
-                action();
+action();
+}
 
-            }
-
-        }
-    );
-
+}
+);
 
 
 document
-    .getElementById(
-        'customModalCancel'
-    )
-    .addEventListener(
-        'click',
-        function() {
+.getElementById('customModalCancel')
+.addEventListener(
+'click',
+function() {
 
-            if (
-                modalCancelAction
-            ) {
+if (modalCancelAction) {
 
-                const action =
-                    modalCancelAction;
+const action =
+modalCancelAction;
 
-                action();
+action();
 
-            }
+} else {
 
-            else {
+closeModal();
+}
 
-                closeModal();
-
-            }
-
-        }
-    );
+}
+);
 
 
+document
+.getElementById('customModal')
+.addEventListener(
+'click',
+function(event) {
 
-/* =====================================
-   LOAD DATA
-   ===================================== */
+if (event.target === this) {
+
+if (modalCancelAction) {
+
+const action =
+modalCancelAction;
+
+action();
+
+} else {
+
+closeModal();
+}
+}
+
+}
+);
+
+
+/* =========================
+LOAD DATA
+========================= */
 
 function loadData() {
 
-    document
-        .getElementById(
-            'loading'
-        )
-        .style.display =
-            'block';
+document.getElementById(
+'loading'
+).style.display = 'block';
 
 
-    fetch(scriptURL)
+fetch(scriptURL)
 
-        .then(
-            response =>
-                response.json()
-        )
+.then(response => response.json())
 
-        .then(
-            data => {
+.then(data => {
 
-                currentData =
-                    data;
+currentData = data;
 
+renderTable();
 
-                renderTable();
+document
+.querySelector('thead')
+.setAttribute(
+'data-loaded',
+'true'
+);
 
+document.getElementById(
+'loading'
+).style.display = 'none';
 
-                document
-                    .querySelector(
-                        'thead'
-                    )
-                    .setAttribute(
-                        'data-loaded',
-                        'true'
-                    );
+})
 
+.catch(error => {
 
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
+console.error(
+'Error loading data:',
+error
+);
 
-            }
-        )
+document.getElementById(
+'loading'
+).style.display = 'none';
 
-        .catch(
-            error => {
-
-                console.error(
-                    'Error loading data:',
-                    error
-                );
-
-
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
-
-            }
-        );
+});
 
 }
 
 
-
-/* =====================================
-   SUBMIT ENTRY
-   ===================================== */
+/* =========================
+SUBMIT ENTRY
+========================= */
 
 function submitEntry() {
 
-    const name =
-        document
-            .getElementById(
-                'name'
-            )
-            .value
-            .trim();
+const nameInput =
+document.getElementById('name');
 
+const hoursInput =
+document.getElementById('hours');
 
-    const hoursValue =
-        hoursField
-            .value
-            .trim();
 
+const name =
+nameInput.value.trim();
 
+const hoursValue =
+hoursInput.value.trim();
 
-    if (
-        !name &&
-        !hoursValue
-    ) {
 
-        showAlert(
-            'Please enter your Name and Hours.'
-        );
+/*
+We are finished editing the field.
+This dismisses the keyboard.
+*/
 
-        return;
+hoursInput.blur();
 
-    }
 
+if (!name && !hoursValue) {
 
+showAlert(
+'Please enter your Name and Hours.'
+);
 
-    if (!name) {
+return;
+}
 
-        showAlert(
-            'Please enter your Name.'
-        );
 
-        return;
+if (!name) {
 
-    }
+showAlert(
+'Please enter your Name.'
+);
 
+return;
+}
 
 
-    if (!hoursValue) {
+if (!hoursValue) {
 
-        openHoursPopup();
+showAlert(
+'Please enter Hours.'
+);
 
-        return;
+return;
+}
 
-    }
 
+const hours =
+parseFloat(hoursValue);
 
 
-    const hours =
-        parseFloat(
-            hoursValue
-        );
+if (isNaN(hours) || hours <= 0) {
 
+showAlert(
+'Please enter valid Hours greater than 0.'
+);
 
+return;
+}
 
-    if (
-        isNaN(hours) ||
-        hours <= 0
-    ) {
 
-        showAlert(
-            'Please enter valid Hours greater than 0.'
-        );
+if (hours > 4.5) {
 
-        return;
+showAlert(
 
-    }
+'Max Time of 4.5 hrs.',
 
+'OK',
 
+function() {
 
-    if (
-        hours > 4.5
-    ) {
+hoursInput.value = '';
 
-        showAlert(
+hoursInput.focus();
 
-            'Max Time of 4.5 hrs.',
+}
 
-            'OK',
+);
 
-            function() {
+return;
+}
 
-                hoursField.value =
-                    '';
 
+localStorage.setItem(
+'lastName',
+name
+);
 
-                openHoursPopup();
 
-            }
+const params =
+?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)};
 
-        );
 
+document.getElementById(
+'loading'
+).style.display = 'block';
 
-        return;
 
-    }
+fetch(scriptURL + params)
 
+.then(response => response.json())
 
+.then(data => {
 
-    localStorage.setItem(
-        'lastName',
-        name
-    );
+currentData = data;
 
+renderTable();
 
-    const params =
-        `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
+document.getElementById(
+'loading'
+).style.display = 'none';
 
+hoursInput.value = '';
 
-    document
-        .getElementById(
-            'loading'
-        )
-        .style.display =
-            'block';
+})
 
+.catch(error => {
 
+console.error(
+'Fetch error:',
+error
+);
 
-    fetch(
-        scriptURL +
-        params
-    )
+showAlert(
+'Error submitting entry. Check console for details.'
+);
 
-        .then(
-            response =>
-                response.json()
-        )
+document.getElementById(
+'loading'
+).style.display = 'none';
 
-        .then(
-            data => {
-
-                currentData =
-                    data;
-
-
-                renderTable();
-
-
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
-
-
-                hoursField.value =
-                    '';
-
-            }
-        )
-
-        .catch(
-            error => {
-
-                console.error(
-                    'Fetch error:',
-                    error
-                );
-
-
-                showAlert(
-                    'Error submitting entry. Check console for details.'
-                );
-
-
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
-
-            }
-        );
+});
 
 }
 
 
+/* =========================
+KEYBOARD ENTER / DONE
+========================= */
 
-/* =====================================
-   DELETE ENTRY
-   ===================================== */
+document
+.getElementById('hours')
+.addEventListener(
+'keydown',
+function(event) {
+
+if (event.key === 'Enter') {
+
+event.preventDefault();
+
+/*
+Same behavior as tapping
+the blue SUBMIT button.
+*/
+
+submitEntry();
+
+}
+
+}
+);
+
+
+/* =========================
+DELETE ONE ENTRY
+========================= */
 
 function deleteEntry(start) {
 
-    showConfirm(
+showConfirm(
 
-        'Delete this entry?',
+'Delete this entry?',
 
-        'Delete',
+'Delete',
 
-        function() {
+function() {
 
-            const rows =
-                document.querySelectorAll(
-                    '#statusTable tbody tr[data-start]'
-                );
-
-
-            for (
-                const row
-                of rows
-            ) {
-
-                if (
-                    row.getAttribute(
-                        'data-start'
-                    ) === start
-                ) {
-
-                    row.classList.remove(
-                        'active-row'
-                    );
+const rows =
+document.querySelectorAll(
+'#statusTable tbody tr[data-start]'
+);
 
 
-                    const timeLeftCell =
-                        row.querySelector(
-                            'td[data-label="Time Left"]'
-                        );
+for (const row of rows) {
+
+if (
+row.getAttribute(
+'data-start'
+) === start
+) {
+
+row.classList.remove(
+'active-row'
+);
 
 
-                    if (
-                        timeLeftCell
-                    ) {
-
-                        timeLeftCell.innerHTML =
-                            '<b style="font-size: 1.5em;">DELETING</b>';
-
-                    }
+const timeLeftCell =
+row.querySelector(
+'td[data-label="Time Left"]'
+);
 
 
-                    break;
+if (timeLeftCell) {
 
-                }
-
-            }
-
-
-            const params =
-                `?action=delete&start=${encodeURIComponent(start)}`;
-
-
-            document
-                .getElementById(
-                    'loading'
-                )
-                .style.display =
-                    'block';
-
-
-            fetch(
-                scriptURL +
-                params
-            )
-
-                .then(
-                    response =>
-                        response.json()
-                )
-
-                .then(
-                    data => {
-
-                        currentData =
-                            data;
-
-
-                        renderTable();
-
-
-                        document
-                            .getElementById(
-                                'loading'
-                            )
-                            .style.display =
-                                'none';
-
-                    }
-                )
-
-                .catch(
-                    error => {
-
-                        console.error(
-                            'Delete error:',
-                            error
-                        );
-
-
-                        showAlert(
-                            'Error deleting entry. Check console for details.'
-                        );
-
-
-                        document
-                            .getElementById(
-                                'loading'
-                            )
-                            .style.display =
-                                'none';
-
-                    }
-                );
-
-        },
-
-        true
-
-    );
+timeLeftCell.innerHTML =
+'<b style="font-size: 1.5em;">DELETING</b>';
 
 }
 
 
+break;
+}
+}
 
-/* =====================================
-   DELETE ALL
-   ===================================== */
+
+const params =
+?action=delete&start=${encodeURIComponent(start)}`;
+
+
+document.getElementById(
+'loading'
+).style.display = 'block';
+
+
+fetch(scriptURL + params)
+
+.then(response => response.json())
+
+.then(data => {
+
+currentData = data;
+
+renderTable();
+
+document.getElementById(
+'loading'
+).style.display = 'none';
+
+})
+
+.catch(error => {
+
+console.error(
+'Delete error:',
+error
+);
+
+showAlert(
+'Error deleting entry. Check console for details.'
+);
+
+document.getElementById(
+'loading'
+).style.display = 'none';
+
+});
+
+},
+
+true
+
+);
+
+}
+
+
+/* =========================
+DELETE ALL
+========================= */
 
 function deleteAllEntries() {
 
-    showConfirm(
+showConfirm(
 
-        'DELETE ALL ENTRIES?',
+'DELETE ALL ENTRIES?',
 
-        'Delete All',
+'Delete All',
 
-        function() {
+function() {
 
-            const params =
-                '?action=delete_all';
-
-
-            document
-                .getElementById(
-                    'loading'
-                )
-                .style.display =
-                    'block';
+const params =
+'?action=delete_all';
 
 
-            fetch(
-                scriptURL +
-                params
-            )
-
-                .then(
-                    response =>
-                        response.json()
-                )
-
-                .then(
-                    data => {
-
-                        currentData =
-                            data;
+document.getElementById(
+'loading'
+).style.display = 'block';
 
 
-                        renderTable();
+fetch(scriptURL + params)
 
+.then(response => response.json())
 
-                        document
-                            .getElementById(
-                                'loading'
-                            )
-                            .style.display =
-                                'none';
+.then(data => {
 
-                    }
-                )
+currentData = data;
 
-                .catch(
-                    error => {
+renderTable();
 
-                        console.error(
-                            'Delete all error:',
-                            error
-                        );
+document.getElementById(
+'loading'
+).style.display = 'none';
 
+})
 
-                        showAlert(
-                            'Error deleting all entries. Check console for details.'
-                        );
+.catch(error => {
 
+console.error(
+'Delete all error:',
+error
+);
 
-                        document
-                            .getElementById(
-                                'loading'
-                            )
-                            .style.display =
-                                'none';
+showAlert(
+'Error deleting all entries. Check console for details.'
+);
 
-                    }
-                );
+document.getElementById(
+'loading'
+).style.display = 'none';
 
-        },
+});
 
-        true
+},
 
-    );
+true
+
+);
 
 }
 
 
-
-/* =====================================
-   END SESSION
-   ===================================== */
+/* =========================
+END SESSION
+========================= */
 
 function endSession(start) {
 
-    const params =
-        `?action=end_session&start=${encodeURIComponent(start)}`;
+const rows =
+document.querySelectorAll(
+'#statusTable tbody tr[data-start]'
+);
 
 
-    document
-        .getElementById(
-            'loading'
-        )
-        .style.display =
-            'block';
+for (const row of rows) {
+
+if (
+row.getAttribute(
+'data-start'
+) === start
+) {
+
+row.classList.remove(
+'active-row'
+);
 
 
-    fetch(
-        scriptURL +
-        params
-    )
-
-        .then(
-            response =>
-                response.json()
-        )
-
-        .then(
-            data => {
-
-                currentData =
-                    data;
+const timeLeftCell =
+row.querySelector(
+'td[data-label="Time Left"]'
+);
 
 
-                renderTable();
+if (timeLeftCell) {
 
-
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
-
-            }
-        )
-
-        .catch(
-            error => {
-
-                console.error(
-                    'End session error:',
-                    error
-                );
-
-
-                showAlert(
-                    'Error ending session.'
-                );
-
-
-                document
-                    .getElementById(
-                        'loading'
-                    )
-                    .style.display =
-                        'none';
-
-            }
-        );
+timeLeftCell.innerHTML =
+'<b style="font-size: 1.5em;">ENDING</b>';
 
 }
 
 
+break;
+}
+}
 
-/* =====================================
-   RENDER TABLE
-   ===================================== */
+
+const params =
+?action=end_session&start=${encodeURIComponent(start)}`;
+
+
+document.getElementById(
+'loading'
+).style.display = 'block';
+
+
+fetch(scriptURL + params)
+
+.then(response => response.json())
+
+.then(data => {
+
+currentData = data;
+
+renderTable();
+
+document.getElementById(
+'loading'
+).style.display = 'none';
+
+})
+
+.catch(error => {
+
+console.error(
+'End session error:',
+error
+);
+
+showAlert(
+'Error ending session.'
+);
+
+document.getElementById(
+'loading'
+).style.display = 'none';
+
+});
+
+}
+
+
+/* =========================
+RENDER TABLE
+========================= */
 
 function renderTable() {
 
-    const tbody =
-        document.querySelector(
-            '#statusTable tbody'
-        );
+const tbody =
+document.querySelector(
+'#statusTable tbody'
+);
 
 
-    tbody.innerHTML =
-        '';
+tbody.innerHTML = '';
 
 
-    const now =
-        new Date();
+const now =
+new Date();
 
 
+currentData.forEach(entry => {
 
-    currentData.forEach(
-        entry => {
+const startDate =
+new Date(entry.Start);
 
-            const startDate =
-                new Date(
-                    entry.Start
-                );
+const endDate =
+new Date(entry.End);
 
+let remainingMs =
+endDate - now;
 
-            const endDate =
-                new Date(
-                    entry.End
-                );
+let left =
+'Session Ended';
 
-
-            const remainingMs =
-                endDate -
-                now;
+let rowClass =
+'';
 
 
-            let left;
+if (remainingMs > 0) {
 
-            let rowClass =
-                '';
+const hoursLeft =
+Math.floor(
+remainingMs / 3600000
+);
 
-
-
-            if (
-                remainingMs > 0
-            ) {
-
-                const hoursLeft =
-                    Math.floor(
-                        remainingMs /
-                        3600000
-                    );
+const minsLeft =
+Math.floor(
+(remainingMs % 3600000)
+/ 60000
+);
 
 
-                const minsLeft =
-                    Math.floor(
-                        (
-                            remainingMs %
-                            3600000
-                        ) /
-                        60000
-                    );
+left =
+${hoursLeft < 1 ? '' : <b style="font-size: 1.5em;"&gt;${hoursLeft}</b> hr }&lt;b style="font-size: 1.5em;"&gt;${minsLeft}</b> mins`;
 
+rowClass =
+'active-row';
 
-                left =
-                    `${hoursLeft < 1 ? '' : `<b style="font-size:1.5em;">${hoursLeft}</b> hr  `}<b style="font-size:1.5em;">${minsLeft}</b> mins`;
+} else {
 
-
-                rowClass =
-                    'active-row';
-
-            }
-
-            else {
-
-                left =
-                    '<b>Session Ended</b>';
-
-            }
-
-
-
-            const formattedStart =
-                `<span style="font-size:.8em;">${startDate.toLocaleDateString([], {month:'numeric',day:'numeric'})}</span> - <b>${startDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</b>`;
-
-
-            const formattedEnd =
-                `<span style="font-size:.8em;">${endDate.toLocaleDateString([], {month:'numeric',day:'numeric'})}</span> - <b>${endDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</b>`;
-
-
-
-            const row =
-                document.createElement(
-                    'tr'
-                );
-
-
-            row.className =
-                rowClass;
-
-
-            row.setAttribute(
-                'data-start',
-                entry.Start
-            );
-
-
-            row.innerHTML = `
-
-                <td data-label="Name">
-                    ${entry.Name}
-                </td>
-
-                <td data-label="Start">
-                    ${formattedStart}
-                </td>
-
-                <td data-label="End">
-                    ${formattedEnd}
-                </td>
-
-                <td data-label="Time Left">
-                    ${left}
-                </td>
-
-                <td data-label="">
-
-                    <button
-                        class="delete-btn"
-                        onclick="deleteEntry('${entry.Start}')">
-
-                        X
-
-                    </button>
-
-                    ${
-                        remainingMs > 0
-
-                            ? `<button
-                                   class="end-btn"
-                                   onclick="endSession('${entry.Start}')">
-
-                                   End
-
-                               </button>`
-
-                            : ''
-                    }
-
-                </td>
-
-            `;
-
-
-            tbody.appendChild(
-                row
-            );
-
-        }
-    );
+left =
+'<b>Session Ended</b>';
 
 }
 
 
+const timeStart =
+startDate.toLocaleTimeString(
+[],
+{
+hour: '2-digit',
+minute: '2-digit'
+}
+);
 
-/* =====================================
-   RESTORE LAST NAME
-   ===================================== */
+
+const dateStart =
+startDate.toLocaleDateString(
+[],
+{
+month: 'numeric',
+day: 'numeric'
+}
+);
+
+
+const formattedStart =
+<span style="font-size: 0.8em;"&gt;${dateStart}</span> - <b>${timeStart}&lt;/b>;
+
+
+const timeEnd =
+endDate.toLocaleTimeString(
+[],
+{
+hour: '2-digit',
+minute: '2-digit'
+}
+);
+
+
+const dateEnd =
+endDate.toLocaleDateString(
+[],
+{
+month: 'numeric',
+day: 'numeric'
+}
+);
+
+
+const formattedEnd =
+<span style="font-size: 0.8em;"&gt;${dateEnd}</span> - <b>${timeEnd}&lt;/b>;
+
+
+const row =
+document.createElement('tr');
+
+
+row.className =
+rowClass;
+
+
+row.setAttribute(
+'data-start',
+entry.Start
+);
+
+
+row.innerHTML = `
+
+<td data-label="Name">
+`${entry.Name}
+</td>
+
+<td data-label="Start">
+$`{formattedStart}
+</td>
+
+<td data-label="End">
+`${formattedEnd}
+</td>
+
+<td data-label="Time Left">
+$`{left}
+</td>
+
+<td data-label="">
+
+<button
+class="delete-btn"
+onclick="deleteEntry('`${entry.Start}')">
+
+X
+
+</button>
+
+$`{
+remainingMs > 0
+
+? <button class="end-btn mobile-only" onclick="endSession('${entry.Start}')">
+
+End
+
+</button>`
+
+: ''
+}
+
+</td>
+
+`;
+
+
+tbody.appendChild(row);
+
+});
+
+}
+
+
+/* =========================
+RESTORE LAST NAME
+========================= */
 
 const lastName =
-    localStorage.getItem(
-        'lastName'
-    );
+localStorage.getItem(
+'lastName'
+);
 
 
 if (lastName) {
 
-    document
-        .getElementById(
-            'name'
-        )
-        .value =
-            lastName;
+document.getElementById(
+'name'
+).value = lastName;
 
 }
-
 
 
 /* INITIAL LOAD */
 
 loadData();
 
+
+/* Auto-refresh currently disabled */
+
+// setInterval(loadData, 10000);
 
 </script>
 
