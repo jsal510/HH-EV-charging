@@ -2,8 +2,14 @@
 <html>
 <head>
     <title>EV Charging Status</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+        rel="stylesheet">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <style>
         /* AUG 6 1PM VERSION */
@@ -230,6 +236,27 @@
             margin-bottom: 22px;
         }
 
+        .custom-modal-password {
+            display: none;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: none;
+            margin: 0 0 20px 0;
+            padding: 10px;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #666;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .custom-modal-password:focus {
+            outline: none;
+            border-color: #1a5178;
+        }
+
         .custom-modal-buttons {
             display: flex;
             justify-content: center;
@@ -264,9 +291,11 @@
 
 
         @media (min-width: 601px) {
+
             thead[data-loaded="true"] {
                 display: table-header-group;
             }
+
         }
 
 
@@ -332,15 +361,21 @@
             .delete-all-btn {
                 margin: 10px auto 0;
             }
+
         }
     </style>
 </head>
+
 
 <body>
 
     <h1>EV Charging Status</h1>
 
-    <form id="chargingForm" onsubmit="submitEntry(); return false;" novalidate>
+
+    <form
+        id="chargingForm"
+        onsubmit="submitEntry(); return false;"
+        novalidate>
 
         <input
             id="name"
@@ -375,7 +410,9 @@
                     <th>Name</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th class="time-left-header">Time Left</th>
+                    <th class="time-left-header">
+                        Time Left
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -409,6 +446,16 @@
                 class="custom-modal-message">
             </div>
 
+
+            <input
+                id="customModalPassword"
+                class="custom-modal-password"
+                type="password"
+                autocomplete="off"
+                enterkeyhint="done"
+                placeholder="Password">
+
+
             <div class="custom-modal-buttons">
 
                 <button
@@ -419,6 +466,7 @@
                     Cancel
 
                 </button>
+
 
                 <button
                     id="customModalConfirm"
@@ -442,6 +490,10 @@
             'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
 
 
+        const DELETE_PASSWORD =
+            'Ok';
+
+
         let currentData = [];
 
         let modalConfirmAction = null;
@@ -460,42 +512,72 @@
         ) {
 
             const modal =
-                document.getElementById('customModal');
+                document.getElementById(
+                    'customModal'
+                );
 
             const messageBox =
-                document.getElementById('customModalMessage');
+                document.getElementById(
+                    'customModalMessage'
+                );
 
             const confirmButton =
-                document.getElementById('customModalConfirm');
+                document.getElementById(
+                    'customModalConfirm'
+                );
 
             const cancelButton =
-                document.getElementById('customModalCancel');
+                document.getElementById(
+                    'customModalCancel'
+                );
+
+            const passwordInput =
+                document.getElementById(
+                    'customModalPassword'
+                );
 
 
-            messageBox.textContent = message;
+            passwordInput.style.display =
+                'none';
 
-            cancelButton.style.display = 'none';
+            passwordInput.value =
+                '';
 
-            confirmButton.textContent = buttonText;
+
+            messageBox.textContent =
+                message;
+
+
+            cancelButton.style.display =
+                'none';
+
+
+            confirmButton.textContent =
+                buttonText;
 
             confirmButton.className =
                 'custom-modal-button';
 
 
-            modalConfirmAction = function() {
+            modalConfirmAction =
+                function() {
 
-                closeModal();
+                    closeModal();
 
-                if (afterClose) {
-                    afterClose();
-                }
+                    if (afterClose) {
+                        afterClose();
+                    }
 
-            };
+                };
 
 
-            modalCancelAction = null;
+            modalCancelAction =
+                null;
 
-            modal.style.display = 'flex';
+
+            modal.style.display =
+                'flex';
+
         }
 
 
@@ -511,25 +593,48 @@
         ) {
 
             const modal =
-                document.getElementById('customModal');
+                document.getElementById(
+                    'customModal'
+                );
 
             const messageBox =
-                document.getElementById('customModalMessage');
+                document.getElementById(
+                    'customModalMessage'
+                );
 
             const confirmButton =
-                document.getElementById('customModalConfirm');
+                document.getElementById(
+                    'customModalConfirm'
+                );
 
             const cancelButton =
-                document.getElementById('customModalCancel');
+                document.getElementById(
+                    'customModalCancel'
+                );
+
+            const passwordInput =
+                document.getElementById(
+                    'customModalPassword'
+                );
 
 
-            messageBox.textContent = message;
+            passwordInput.style.display =
+                'none';
+
+            passwordInput.value =
+                '';
+
+
+            messageBox.textContent =
+                message;
+
 
             cancelButton.style.display =
                 'inline-block';
 
             cancelButton.textContent =
                 'Cancel';
+
 
             confirmButton.textContent =
                 confirmText;
@@ -548,23 +653,140 @@
             }
 
 
-            modalConfirmAction = function() {
+            modalConfirmAction =
+                function() {
 
-                closeModal();
+                    closeModal();
 
-                onConfirm();
+                    onConfirm();
 
-            };
-
-
-            modalCancelAction = function() {
-
-                closeModal();
-
-            };
+                };
 
 
-            modal.style.display = 'flex';
+            modalCancelAction =
+                function() {
+
+                    closeModal();
+
+                };
+
+
+            modal.style.display =
+                'flex';
+
+        }
+
+
+        /* =========================
+           PASSWORD CONFIRM
+           ========================= */
+
+        function showPasswordConfirm(
+            message,
+            confirmText,
+            onConfirm
+        ) {
+
+            const modal =
+                document.getElementById(
+                    'customModal'
+                );
+
+            const messageBox =
+                document.getElementById(
+                    'customModalMessage'
+                );
+
+            const confirmButton =
+                document.getElementById(
+                    'customModalConfirm'
+                );
+
+            const cancelButton =
+                document.getElementById(
+                    'customModalCancel'
+                );
+
+            const passwordInput =
+                document.getElementById(
+                    'customModalPassword'
+                );
+
+
+            messageBox.textContent =
+                message;
+
+
+            passwordInput.value =
+                '';
+
+            passwordInput.style.display =
+                'block';
+
+
+            cancelButton.style.display =
+                'inline-block';
+
+            cancelButton.textContent =
+                'Cancel';
+
+
+            confirmButton.textContent =
+                confirmText;
+
+            confirmButton.className =
+                'custom-modal-button custom-modal-delete';
+
+
+            modalConfirmAction =
+                function() {
+
+                    if (
+                        passwordInput.value !==
+                        DELETE_PASSWORD
+                    ) {
+
+                        messageBox.textContent =
+                            'Incorrect Password';
+
+                        passwordInput.value =
+                            '';
+
+                        passwordInput.focus();
+
+                        return;
+
+                    }
+
+
+                    closeModal();
+
+                    onConfirm();
+
+                };
+
+
+            modalCancelAction =
+                function() {
+
+                    closeModal();
+
+                };
+
+
+            modal.style.display =
+                'flex';
+
+
+            setTimeout(
+                function() {
+
+                    passwordInput.focus();
+
+                },
+                50
+            );
+
         }
 
 
@@ -576,26 +798,49 @@
 
             document.getElementById(
                 'customModal'
-            ).style.display = 'none';
+            ).style.display =
+                'none';
 
-            modalConfirmAction = null;
 
-            modalCancelAction = null;
+            const passwordInput =
+                document.getElementById(
+                    'customModalPassword'
+                );
+
+
+            passwordInput.value =
+                '';
+
+            passwordInput.style.display =
+                'none';
+
+
+            modalConfirmAction =
+                null;
+
+            modalCancelAction =
+                null;
+
         }
 
 
         document
-            .getElementById('customModalConfirm')
+            .getElementById(
+                'customModalConfirm'
+            )
             .addEventListener(
                 'click',
                 function() {
 
-                    if (modalConfirmAction) {
+                    if (
+                        modalConfirmAction
+                    ) {
 
                         const action =
                             modalConfirmAction;
 
                         action();
+
                     }
 
                 }
@@ -603,12 +848,16 @@
 
 
         document
-            .getElementById('customModalCancel')
+            .getElementById(
+                'customModalCancel'
+            )
             .addEventListener(
                 'click',
                 function() {
 
-                    if (modalCancelAction) {
+                    if (
+                        modalCancelAction
+                    ) {
 
                         const action =
                             modalCancelAction;
@@ -618,6 +867,7 @@
                     } else {
 
                         closeModal();
+
                     }
 
                 }
@@ -625,14 +875,21 @@
 
 
         document
-            .getElementById('customModal')
+            .getElementById(
+                'customModal'
+            )
             .addEventListener(
                 'click',
                 function(event) {
 
-                    if (event.target === this) {
+                    if (
+                        event.target ===
+                        this
+                    ) {
 
-                        if (modalCancelAction) {
+                        if (
+                            modalCancelAction
+                        ) {
 
                             const action =
                                 modalCancelAction;
@@ -642,7 +899,41 @@
                         } else {
 
                             closeModal();
+
                         }
+
+                    }
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                'customModalPassword'
+            )
+            .addEventListener(
+                'keydown',
+                function(event) {
+
+                    if (
+                        event.key ===
+                        'Enter'
+                    ) {
+
+                        event.preventDefault();
+
+                        if (
+                            modalConfirmAction
+                        ) {
+
+                            const action =
+                                modalConfirmAction;
+
+                            action();
+
+                        }
+
                     }
 
                 }
@@ -657,29 +948,39 @@
 
             document.getElementById(
                 'loading'
-            ).style.display = 'block';
+            ).style.display =
+                'block';
 
 
             fetch(scriptURL)
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
-                    currentData = data;
+                    currentData =
+                        data;
 
                     renderTable();
 
+
                     document
-                        .querySelector('thead')
+                        .querySelector(
+                            'thead'
+                        )
                         .setAttribute(
                             'data-loaded',
                             'true'
                         );
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
                 })
 
@@ -690,9 +991,11 @@
                         error
                     );
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
                 });
 
@@ -706,10 +1009,14 @@
         function submitEntry() {
 
             const nameInput =
-                document.getElementById('name');
+                document.getElementById(
+                    'name'
+                );
 
             const hoursInput =
-                document.getElementById('hours');
+                document.getElementById(
+                    'hours'
+                );
 
 
             const name =
@@ -727,13 +1034,17 @@
             hoursInput.blur();
 
 
-            if (!name && !hoursValue) {
+            if (
+                !name &&
+                !hoursValue
+            ) {
 
                 showAlert(
                     'Please enter your Name and Hours.'
                 );
 
                 return;
+
             }
 
 
@@ -744,6 +1055,7 @@
                 );
 
                 return;
+
             }
 
 
@@ -754,24 +1066,34 @@
                 );
 
                 return;
+
             }
 
 
             const hours =
-                parseFloat(hoursValue);
+                parseFloat(
+                    hoursValue
+                );
 
 
-            if (isNaN(hours) || hours <= 0) {
+            if (
+                isNaN(hours) ||
+                hours <= 0
+            ) {
 
                 showAlert(
                     'Please enter valid Hours greater than 0.'
                 );
 
                 return;
+
             }
 
 
-            if (hours > 4.5) {
+            if (
+                hours >
+                4.5
+            ) {
 
                 showAlert(
 
@@ -781,7 +1103,8 @@
 
                     function() {
 
-                        hoursInput.value = '';
+                        hoursInput.value =
+                            '';
 
                         hoursInput.focus();
 
@@ -790,6 +1113,7 @@
                 );
 
                 return;
+
             }
 
 
@@ -805,24 +1129,36 @@
 
             document.getElementById(
                 'loading'
-            ).style.display = 'block';
+            ).style.display =
+                'block';
 
 
-            fetch(scriptURL + params)
+            fetch(
+                scriptURL +
+                params
+            )
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
-                    currentData = data;
+                    currentData =
+                        data;
 
                     renderTable();
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
-                    hoursInput.value = '';
+
+                    hoursInput.value =
+                        '';
 
                 })
 
@@ -833,13 +1169,16 @@
                         error
                     );
 
+
                     showAlert(
                         'Error submitting entry. Check console for details.'
                     );
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
                 });
 
@@ -851,18 +1190,25 @@
            ========================= */
 
         document
-            .getElementById('hours')
+            .getElementById(
+                'hours'
+            )
             .addEventListener(
                 'keydown',
                 function(event) {
 
-                    if (event.key === 'Enter') {
+                    if (
+                        event.key ===
+                        'Enter'
+                    ) {
 
                         event.preventDefault();
 
+
                         /*
                             Return / Done ONLY closes
-                            the keyboard now.
+                            the keyboard.
+
                             It does NOT submit.
                         */
 
@@ -880,9 +1226,9 @@
 
         function deleteEntry(start) {
 
-            showConfirm(
+            showPasswordConfirm(
 
-                'Delete this entry?',
+                'Enter Password to Delete',
 
                 'Delete',
 
@@ -894,12 +1240,16 @@
                         );
 
 
-                    for (const row of rows) {
+                    for (
+                        const row
+                        of rows
+                    ) {
 
                         if (
                             row.getAttribute(
                                 'data-start'
-                            ) === start
+                            ) ===
+                            start
                         ) {
 
                             row.classList.remove(
@@ -913,7 +1263,9 @@
                                 );
 
 
-                            if (timeLeftCell) {
+                            if (
+                                timeLeftCell
+                            ) {
 
                                 timeLeftCell.innerHTML =
                                     '<b style="font-size: 1.5em;">DELETING</b>';
@@ -922,7 +1274,9 @@
 
 
                             break;
+
                         }
+
                     }
 
 
@@ -932,45 +1286,50 @@
 
                     document.getElementById(
                         'loading'
-                    ).style.display = 'block';
+                    ).style.display =
+                        'block';
 
 
-                    fetch(scriptURL + params)
+                    /*
+                        Do not trust the delete response
+                        to repaint the page.
 
-                        .then(response => response.json())
+                        The Sheet is the source of truth,
+                        so reload it after the request.
+                    */
 
-                        .then(data => {
+                    fetch(
+                        scriptURL +
+                        params
+                    )
 
-                            currentData = data;
+                        .then(() => {
 
-                            renderTable();
-
-                            document.getElementById(
-                                'loading'
-                            ).style.display = 'none';
+                            loadData();
 
                         })
 
                         .catch(error => {
 
                             console.error(
-                                'Delete error:',
+                                'Delete response error:',
                                 error
                             );
 
-                            showAlert(
-                                'Error deleting entry. Check console for details.'
-                            );
 
-                            document.getElementById(
-                                'loading'
-                            ).style.display = 'none';
+                            /*
+                                The delete may still have
+                                reached Google successfully.
+
+                                Reload Sheet1 instead of
+                                displaying stale rows.
+                            */
+
+                            loadData();
 
                         });
 
-                },
-
-                true
+                }
 
             );
 
@@ -983,7 +1342,7 @@
 
         function deleteAllEntries() {
 
-            showConfirm(
+            showPasswordConfirm(
 
                 'DELETE ALL ENTRIES?',
 
@@ -997,45 +1356,46 @@
 
                     document.getElementById(
                         'loading'
-                    ).style.display = 'block';
+                    ).style.display =
+                        'block';
 
 
-                    fetch(scriptURL + params)
+                    /*
+                        Same rule as individual Delete:
+                        always re-read Sheet1 afterward.
+                    */
 
-                        .then(response => response.json())
+                    fetch(
+                        scriptURL +
+                        params
+                    )
 
-                        .then(data => {
+                        .then(() => {
 
-                            currentData = data;
-
-                            renderTable();
-
-                            document.getElementById(
-                                'loading'
-                            ).style.display = 'none';
+                            loadData();
 
                         })
 
                         .catch(error => {
 
                             console.error(
-                                'Delete all error:',
+                                'Delete all response error:',
                                 error
                             );
 
-                            showAlert(
-                                'Error deleting all entries. Check console for details.'
-                            );
 
-                            document.getElementById(
-                                'loading'
-                            ).style.display = 'none';
+                            /*
+                                If Google performed the
+                                delete but the response
+                                failed, this clears the
+                                stale website rows.
+                            */
+
+                            loadData();
 
                         });
 
-                },
-
-                true
+                }
 
             );
 
@@ -1054,12 +1414,16 @@
                 );
 
 
-            for (const row of rows) {
+            for (
+                const row
+                of rows
+            ) {
 
                 if (
                     row.getAttribute(
                         'data-start'
-                    ) === start
+                    ) ===
+                    start
                 ) {
 
                     row.classList.remove(
@@ -1073,7 +1437,9 @@
                         );
 
 
-                    if (timeLeftCell) {
+                    if (
+                        timeLeftCell
+                    ) {
 
                         timeLeftCell.innerHTML =
                             '<b style="font-size: 1.5em;">ENDING</b>';
@@ -1082,7 +1448,9 @@
 
 
                     break;
+
                 }
+
             }
 
 
@@ -1092,22 +1460,32 @@
 
             document.getElementById(
                 'loading'
-            ).style.display = 'block';
+            ).style.display =
+                'block';
 
 
-            fetch(scriptURL + params)
+            fetch(
+                scriptURL +
+                params
+            )
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
-                    currentData = data;
+                    currentData =
+                        data;
 
                     renderTable();
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
                 })
 
@@ -1118,13 +1496,16 @@
                         error
                     );
 
+
                     showAlert(
                         'Error ending session.'
                     );
 
+
                     document.getElementById(
                         'loading'
-                    ).style.display = 'none';
+                    ).style.display =
+                        'none';
 
                 });
 
@@ -1143,171 +1524,207 @@
                 );
 
 
-            tbody.innerHTML = '';
+            tbody.innerHTML =
+                '';
 
 
             const now =
                 new Date();
 
 
-            currentData.forEach(entry => {
+            currentData.forEach(
+                entry => {
 
-                const startDate =
-                    new Date(entry.Start);
-
-                const endDate =
-                    new Date(entry.End);
-
-                let remainingMs =
-                    endDate - now;
-
-                let left =
-                    'Session Ended';
-
-                let rowClass =
-                    '';
-
-
-                if (remainingMs > 0) {
-
-                    const hoursLeft =
-                        Math.floor(
-                            remainingMs / 3600000
+                    const startDate =
+                        new Date(
+                            entry.Start
                         );
 
-                    const minsLeft =
-                        Math.floor(
-                            (remainingMs % 3600000)
-                            / 60000
+                    const endDate =
+                        new Date(
+                            entry.End
                         );
 
 
-                    left =
-                        `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr  `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
+                    let remainingMs =
+                        endDate -
+                        now;
 
-                    rowClass =
-                        'active-row';
 
-                } else {
+                    let left =
+                        'Session Ended';
 
-                    left =
-                        '<b>Session Ended</b>';
+
+                    let rowClass =
+                        '';
+
+
+                    if (
+                        remainingMs >
+                        0
+                    ) {
+
+                        const hoursLeft =
+                            Math.floor(
+                                remainingMs /
+                                3600000
+                            );
+
+
+                        const minsLeft =
+                            Math.floor(
+                                (
+                                    remainingMs %
+                                    3600000
+                                ) /
+                                60000
+                            );
+
+
+                        left =
+                            `${hoursLeft < 1 ? '' : `<b style="font-size: 1.5em;">${hoursLeft}</b> hr  `}<b style="font-size: 1.5em;">${minsLeft}</b> mins`;
+
+
+                        rowClass =
+                            'active-row';
+
+                    } else {
+
+                        left =
+                            '<b>Session Ended</b>';
+
+                    }
+
+
+                    const timeStart =
+                        startDate.toLocaleTimeString(
+                            [],
+                            {
+                                hour:
+                                    '2-digit',
+
+                                minute:
+                                    '2-digit'
+                            }
+                        );
+
+
+                    const dateStart =
+                        startDate.toLocaleDateString(
+                            [],
+                            {
+                                month:
+                                    'numeric',
+
+                                day:
+                                    'numeric'
+                            }
+                        );
+
+
+                    const formattedStart =
+                        `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
+
+
+                    const timeEnd =
+                        endDate.toLocaleTimeString(
+                            [],
+                            {
+                                hour:
+                                    '2-digit',
+
+                                minute:
+                                    '2-digit'
+                            }
+                        );
+
+
+                    const dateEnd =
+                        endDate.toLocaleDateString(
+                            [],
+                            {
+                                month:
+                                    'numeric',
+
+                                day:
+                                    'numeric'
+                            }
+                        );
+
+
+                    const formattedEnd =
+                        `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
+
+
+                    const row =
+                        document.createElement(
+                            'tr'
+                        );
+
+
+                    row.className =
+                        rowClass;
+
+
+                    row.setAttribute(
+                        'data-start',
+                        entry.Start
+                    );
+
+
+                    row.innerHTML = `
+
+                        <td data-label="Name">
+                            ${entry.Name}
+                        </td>
+
+                        <td data-label="Start">
+                            ${formattedStart}
+                        </td>
+
+                        <td data-label="End">
+                            ${formattedEnd}
+                        </td>
+
+                        <td data-label="Time Left">
+                            ${left}
+                        </td>
+
+                        <td data-label="">
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteEntry('${entry.Start}')">
+
+                                X
+
+                            </button>
+
+                            ${
+                                remainingMs > 0
+
+                                    ? `<button
+                                           class="end-btn mobile-only"
+                                           onclick="endSession('${entry.Start}')">
+
+                                           End
+
+                                       </button>`
+
+                                    : ''
+                            }
+
+                        </td>
+
+                    `;
+
+
+                    tbody.appendChild(
+                        row
+                    );
 
                 }
-
-
-                const timeStart =
-                    startDate.toLocaleTimeString(
-                        [],
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }
-                    );
-
-
-                const dateStart =
-                    startDate.toLocaleDateString(
-                        [],
-                        {
-                            month: 'numeric',
-                            day: 'numeric'
-                        }
-                    );
-
-
-                const formattedStart =
-                    `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
-
-
-                const timeEnd =
-                    endDate.toLocaleTimeString(
-                        [],
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }
-                    );
-
-
-                const dateEnd =
-                    endDate.toLocaleDateString(
-                        [],
-                        {
-                            month: 'numeric',
-                            day: 'numeric'
-                        }
-                    );
-
-
-                const formattedEnd =
-                    `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
-
-
-                const row =
-                    document.createElement('tr');
-
-
-                row.className =
-                    rowClass;
-
-
-                row.setAttribute(
-                    'data-start',
-                    entry.Start
-                );
-
-
-                row.innerHTML = `
-
-                    <td data-label="Name">
-                        ${entry.Name}
-                    </td>
-
-                    <td data-label="Start">
-                        ${formattedStart}
-                    </td>
-
-                    <td data-label="End">
-                        ${formattedEnd}
-                    </td>
-
-                    <td data-label="Time Left">
-                        ${left}
-                    </td>
-
-                    <td data-label="">
-
-                        <button
-                            class="delete-btn"
-                            onclick="deleteEntry('${entry.Start}')">
-
-                            X
-
-                        </button>
-
-                        ${
-                            remainingMs > 0
-
-                                ? `<button
-                                       class="end-btn mobile-only"
-                                       onclick="endSession('${entry.Start}')">
-
-                                       End
-
-                                   </button>`
-
-                                : ''
-                        }
-
-                    </td>
-
-                `;
-
-
-                tbody.appendChild(row);
-
-            });
+            );
 
         }
 
@@ -1322,11 +1739,14 @@
             );
 
 
-        if (lastName) {
+        if (
+            lastName
+        ) {
 
             document.getElementById(
                 'name'
-            ).value = lastName;
+            ).value =
+                lastName;
 
         }
 
