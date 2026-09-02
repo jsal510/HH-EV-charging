@@ -4,8 +4,10 @@
     <title>EV Charging Status</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         /* AUG 6 1PM VERSION */
+
         body {
             font-family: 'Roboto', sans-serif;
             margin: 12px;
@@ -113,7 +115,8 @@
             margin: 0 auto;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #444;
             padding: 4px;
             text-align: center;
@@ -190,37 +193,52 @@
             display: none;
         }
 
-        /* CUSTOM MODAL */
+
+        /* =========================
+           CUSTOM MODAL
+           ========================= */
+
         .custom-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
+
             background-color: rgba(0, 0, 0, 0.55);
+
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
+
             z-index: 9999;
+
             align-items: center;
             justify-content: center;
+
             padding: 20px;
         }
 
         .custom-modal-box {
             width: 90%;
             max-width: 320px;
+
             background-color: #111;
+
             border: 2px solid #fff;
             border-radius: 8px;
+
             padding: 25px 20px 20px;
+
             text-align: center;
             box-sizing: border-box;
         }
 
         .custom-modal-message {
             color: #fff;
+
             font-size: 1.15em;
             font-weight: bold;
-            margin-bottom: 22px;
             line-height: 1.4;
+
+            margin-bottom: 22px;
         }
 
         .custom-modal-buttons {
@@ -232,14 +250,21 @@
         .custom-modal-button {
             background-color: #1a5178;
             color: #fff;
+
             border: none;
+
             padding: 12px 18px;
+
             cursor: pointer;
+
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
+
             width: auto;
             min-width: 95px;
+
             font-size: 1em;
+
             text-transform: uppercase;
         }
 
@@ -255,13 +280,17 @@
             background-color: #a33131;
         }
 
+
         @media (min-width: 601px) {
+
             thead[data-loaded="true"] {
                 display: table-header-group;
             }
         }
 
+
         @media (max-width: 600px) {
+
             h1 {
                 font-size: 1.5em;
             }
@@ -284,30 +313,43 @@
                 display: block;
                 text-align: right;
                 font-size: 13px;
+
                 border-bottom: 1px dotted #555;
+
                 position: relative;
+
                 padding-left: 50%;
                 padding-right: 15px;
             }
 
             td:before {
                 content: attr(data-label);
+
                 position: absolute;
                 left: 0;
+
                 width: 50%;
+
                 padding-left: 15px;
+
                 font-weight: bold;
                 text-align: left;
             }
 
             td:last-child {
                 border-bottom: 0;
+
                 padding-left: 0;
+
                 text-align: center;
+
                 padding: 3px 5px;
+
                 display: flex;
+
                 justify-content: center;
                 align-items: center;
+
                 gap: 25px;
             }
 
@@ -323,25 +365,52 @@
                 margin: 10px auto 0;
             }
         }
+
     </style>
 </head>
 
+
 <body>
+
 
     <h1>EV Charging Status</h1>
 
-    <form onsubmit="submitEntry(); return false;">
-        <input id="name" placeholder="Name - Vehicle Make" required>
-        <input id="hours" type="number" min="0" step="0.25" placeholder="Hours" required>
 
-        <div id="loading">- - - LOADING - - -</div>
+    <!--
+        novalidate prevents Chrome / Android from showing
+        native "Please fill out this field" messages.
+    -->
 
-        <button type="submit">Submit</button>
+    <form onsubmit="submitEntry(); return false;" novalidate>
+
+        <input
+            id="name"
+            placeholder="Name - Vehicle Make">
+
+        <input
+            id="hours"
+            type="number"
+            min="0"
+            step="0.25"
+            placeholder="Hours">
+
+        <div id="loading">
+            - - - LOADING - - -
+        </div>
+
+        <button type="submit">
+            Submit
+        </button>
+
     </form>
 
+
     <div class="table-container">
+
         <table id="statusTable">
+
             <thead>
+
                 <tr>
                     <th>Name</th>
                     <th>Start</th>
@@ -349,20 +418,41 @@
                     <th class="time-left-header">Time Left</th>
                     <th></th>
                 </tr>
+
             </thead>
 
             <tbody></tbody>
+
         </table>
+
     </div>
 
-    <button class="delete-all-btn" onclick="deleteAllEntries()">Delete All</button>
+
+    <button
+        class="delete-all-btn"
+        onclick="deleteAllEntries()">
+
+        Delete All
+
+    </button>
 
 
-    <!-- CUSTOM MODAL -->
-    <div id="customModal" class="custom-modal-overlay">
+
+    <!-- =========================
+         CUSTOM MODAL
+         ========================= -->
+
+    <div
+        id="customModal"
+        class="custom-modal-overlay">
+
         <div class="custom-modal-box">
 
-            <div id="customModalMessage" class="custom-modal-message"></div>
+            <div
+                id="customModalMessage"
+                class="custom-modal-message">
+            </div>
+
 
             <div class="custom-modal-buttons">
 
@@ -370,173 +460,369 @@
                     id="customModalCancel"
                     type="button"
                     class="custom-modal-button custom-modal-cancel">
+
                     Cancel
+
                 </button>
+
 
                 <button
                     id="customModalConfirm"
                     type="button"
                     class="custom-modal-button">
+
                     OK
+
                 </button>
 
             </div>
 
         </div>
+
     </div>
+
 
 
     <script>
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
+        const scriptURL =
+            'https://script.google.com/macros/s/AKfycbyZcX0HZZga0SZsMwwb5Qc0Dba88GpEEajyH-btkj02c6HvZgEeFxitvxlTjoU3eA6t6A/exec';
+
 
         let currentData = [];
 
         let modalConfirmAction = null;
+
         let modalCancelAction = null;
 
 
+
+        /* =========================
+           CUSTOM ALERT
+           ========================= */
+
         function showAlert(message, buttonText = 'OK') {
 
-            const modal = document.getElementById('customModal');
-            const messageBox = document.getElementById('customModalMessage');
-            const confirmButton = document.getElementById('customModalConfirm');
-            const cancelButton = document.getElementById('customModalCancel');
+            const modal =
+                document.getElementById('customModal');
+
+            const messageBox =
+                document.getElementById('customModalMessage');
+
+            const confirmButton =
+                document.getElementById('customModalConfirm');
+
+            const cancelButton =
+                document.getElementById('customModalCancel');
+
 
             messageBox.textContent = message;
+
 
             cancelButton.style.display = 'none';
 
+
             confirmButton.textContent = buttonText;
-            confirmButton.className = 'custom-modal-button';
+
+            confirmButton.className =
+                'custom-modal-button';
+
 
             modalConfirmAction = function() {
+
                 closeModal();
+
             };
 
+
             modalCancelAction = null;
+
 
             modal.style.display = 'flex';
         }
 
 
-        function showConfirm(message, confirmText, onConfirm, danger = false) {
 
-            const modal = document.getElementById('customModal');
-            const messageBox = document.getElementById('customModalMessage');
-            const confirmButton = document.getElementById('customModalConfirm');
-            const cancelButton = document.getElementById('customModalCancel');
+        /* =========================
+           CUSTOM CONFIRM
+           ========================= */
+
+        function showConfirm(
+            message,
+            confirmText,
+            onConfirm,
+            danger = false
+        ) {
+
+            const modal =
+                document.getElementById('customModal');
+
+            const messageBox =
+                document.getElementById('customModalMessage');
+
+            const confirmButton =
+                document.getElementById('customModalConfirm');
+
+            const cancelButton =
+                document.getElementById('customModalCancel');
+
 
             messageBox.textContent = message;
 
-            cancelButton.style.display = 'inline-block';
-            cancelButton.textContent = 'Cancel';
 
-            confirmButton.textContent = confirmText;
+            cancelButton.style.display =
+                'inline-block';
+
+            cancelButton.textContent =
+                'Cancel';
+
+
+            confirmButton.textContent =
+                confirmText;
+
 
             if (danger) {
-                confirmButton.className = 'custom-modal-button custom-modal-delete';
+
+                confirmButton.className =
+                    'custom-modal-button custom-modal-delete';
+
             } else {
-                confirmButton.className = 'custom-modal-button';
+
+                confirmButton.className =
+                    'custom-modal-button';
+
             }
 
+
             modalConfirmAction = function() {
+
                 closeModal();
+
                 onConfirm();
+
             };
 
+
             modalCancelAction = function() {
+
                 closeModal();
+
             };
+
 
             modal.style.display = 'flex';
         }
 
 
+
+        /* =========================
+           CLOSE MODAL
+           ========================= */
+
         function closeModal() {
-            document.getElementById('customModal').style.display = 'none';
+
+            document.getElementById(
+                'customModal'
+            ).style.display = 'none';
+
 
             modalConfirmAction = null;
+
             modalCancelAction = null;
         }
 
 
-        document.getElementById('customModalConfirm').addEventListener('click', function() {
 
-            if (modalConfirmAction) {
-                const action = modalConfirmAction;
-                action();
-            }
-        });
+        document
+            .getElementById('customModalConfirm')
+            .addEventListener(
+                'click',
+                function() {
 
+                    if (modalConfirmAction) {
 
-        document.getElementById('customModalCancel').addEventListener('click', function() {
+                        const action =
+                            modalConfirmAction;
 
-            if (modalCancelAction) {
-                const action = modalCancelAction;
-                action();
-            } else {
-                closeModal();
-            }
-        });
+                        action();
+                    }
 
-
-        document.getElementById('customModal').addEventListener('click', function(event) {
-
-            if (event.target === this) {
-
-                if (modalCancelAction) {
-                    const action = modalCancelAction;
-                    action();
-                } else {
-                    closeModal();
                 }
-            }
-        });
+            );
 
+
+
+        document
+            .getElementById('customModalCancel')
+            .addEventListener(
+                'click',
+                function() {
+
+                    if (modalCancelAction) {
+
+                        const action =
+                            modalCancelAction;
+
+                        action();
+
+                    } else {
+
+                        closeModal();
+                    }
+
+                }
+            );
+
+
+
+        document
+            .getElementById('customModal')
+            .addEventListener(
+                'click',
+                function(event) {
+
+                    if (event.target === this) {
+
+                        if (modalCancelAction) {
+
+                            const action =
+                                modalCancelAction;
+
+                            action();
+
+                        } else {
+
+                            closeModal();
+                        }
+                    }
+
+                }
+            );
+
+
+
+        /* =========================
+           LOAD DATA
+           ========================= */
 
         function loadData() {
 
-            document.getElementById('loading').style.display = 'block';
+            document.getElementById(
+                'loading'
+            ).style.display = 'block';
+
 
             fetch(scriptURL)
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
                     currentData = data;
 
+
                     renderTable();
+
 
                     document
                         .querySelector('thead')
-                        .setAttribute('data-loaded', 'true');
+                        .setAttribute(
+                            'data-loaded',
+                            'true'
+                        );
 
-                    document.getElementById('loading').style.display = 'none';
+
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
                 })
 
                 .catch(error => {
 
-                    console.error('Error loading data:', error);
+                    console.error(
+                        'Error loading data:',
+                        error
+                    );
 
-                    document.getElementById('loading').style.display = 'none';
+
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
                 });
+
         }
 
+
+
+        /* =========================
+           SUBMIT ENTRY
+           ========================= */
 
         function submitEntry() {
 
             const name =
-                document.getElementById('name').value.trim();
+                document
+                    .getElementById('name')
+                    .value
+                    .trim();
+
+
+            const hoursValue =
+                document
+                    .getElementById('hours')
+                    .value
+                    .trim();
+
+
+            /*
+                CUSTOM VALIDATION
+                No browser popup.
+            */
+
+            if (!name && !hoursValue) {
+
+                showAlert(
+                    'Please enter your Name and Hours.'
+                );
+
+                return;
+            }
+
+
+            if (!name) {
+
+                showAlert(
+                    'Please enter your Name.'
+                );
+
+                return;
+            }
+
+
+            if (!hoursValue) {
+
+                showAlert(
+                    'Please enter Hours.'
+                );
+
+                return;
+            }
+
 
             const hours =
-                parseFloat(document.getElementById('hours').value.trim());
+                parseFloat(hoursValue);
 
 
-            if (!name || isNaN(hours) || hours <= 0) {
+            if (isNaN(hours) || hours <= 0) {
 
-                showAlert('Please enter a valid Name and Hours > 0.');
+                showAlert(
+                    'Please enter valid Hours greater than 0.'
+                );
 
                 return;
             }
@@ -544,47 +830,82 @@
 
             if (hours > 4.5) {
 
-                showAlert('Max Time of 4.5 hrs.');
+                showAlert(
+                    'Max Time of 4.5 hrs.'
+                );
 
                 return;
             }
 
 
-            localStorage.setItem('lastName', name);
+            localStorage.setItem(
+                'lastName',
+                name
+            );
 
 
             const params =
                 `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
 
 
-            document.getElementById('loading').style.display = 'block';
+            document.getElementById(
+                'loading'
+            ).style.display = 'block';
+
 
 
             fetch(scriptURL + params)
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
                     currentData = data;
 
+
                     renderTable();
 
-                    document.getElementById('loading').style.display = 'none';
 
-                    document.getElementById('hours').value = '';
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
+
+                    document.getElementById(
+                        'hours'
+                    ).value = '';
+
                 })
 
                 .catch(error => {
 
-                    console.error('Fetch error:', error);
+                    console.error(
+                        'Fetch error:',
+                        error
+                    );
 
-                    showAlert('Error submitting entry. Check console for details.');
 
-                    document.getElementById('loading').style.display = 'none';
+                    showAlert(
+                        'Error submitting entry. Check console for details.'
+                    );
+
+
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
                 });
+
         }
 
+
+
+        /* =========================
+           DELETE ONE ENTRY
+           ========================= */
 
         function deleteEntry(start) {
 
@@ -596,28 +917,44 @@
 
                 function() {
 
+
                     const rows =
-                        document.querySelectorAll('#statusTable tbody tr[data-start]');
+                        document.querySelectorAll(
+                            '#statusTable tbody tr[data-start]'
+                        );
 
 
                     for (const row of rows) {
 
-                        if (row.getAttribute('data-start') === start) {
+                        if (
+                            row.getAttribute(
+                                'data-start'
+                            ) === start
+                        ) {
 
-                            row.classList.remove('active-row');
+                            row.classList.remove(
+                                'active-row'
+                            );
+
 
                             const timeLeftCell =
-                                row.querySelector('td[data-label="Time Left"]');
+                                row.querySelector(
+                                    'td[data-label="Time Left"]'
+                                );
 
 
                             if (timeLeftCell) {
 
                                 timeLeftCell.innerHTML =
                                     '<b style="font-size: 1.5em;">DELETING</b>';
+
                             }
 
+
                             break;
+
                         }
+
                     }
 
 
@@ -625,103 +962,180 @@
                         `?action=delete&start=${encodeURIComponent(start)}`;
 
 
-                    document.getElementById('loading').style.display = 'block';
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'block';
+
 
 
                     fetch(scriptURL + params)
 
-                        .then(response => response.json())
+                        .then(
+                            response =>
+                                response.json()
+                        )
 
                         .then(data => {
 
                             currentData = data;
 
+
                             renderTable();
 
-                            document.getElementById('loading').style.display = 'none';
+
+                            document.getElementById(
+                                'loading'
+                            ).style.display = 'none';
+
                         })
 
                         .catch(error => {
 
-                            console.error('Delete error:', error);
+                            console.error(
+                                'Delete error:',
+                                error
+                            );
 
-                            showAlert('Error deleting entry. Check console for details.');
 
-                            document.getElementById('loading').style.display = 'none';
+                            showAlert(
+                                'Error deleting entry. Check console for details.'
+                            );
+
+
+                            document.getElementById(
+                                'loading'
+                            ).style.display = 'none';
+
                         });
+
                 },
 
                 true
+
             );
+
         }
 
+
+
+        /* =========================
+           DELETE ALL
+           ========================= */
 
         function deleteAllEntries() {
 
             showConfirm(
-    'DELETE ALL ENTRIES?',
-    'Delete All',
+
+                'DELETE ALL ENTRIES?',
+
+                'Delete All',
+
                 function() {
 
+
                     const params =
-                        `?action=delete_all`;
+                        '?action=delete_all';
 
 
-                    document.getElementById('loading').style.display = 'block';
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'block';
+
 
 
                     fetch(scriptURL + params)
 
-                        .then(response => response.json())
+                        .then(
+                            response =>
+                                response.json()
+                        )
 
                         .then(data => {
 
                             currentData = data;
 
+
                             renderTable();
 
-                            document.getElementById('loading').style.display = 'none';
+
+                            document.getElementById(
+                                'loading'
+                            ).style.display = 'none';
+
                         })
 
                         .catch(error => {
 
-                            console.error('Delete all error:', error);
+                            console.error(
+                                'Delete all error:',
+                                error
+                            );
 
-                            showAlert('Error deleting all entries. Check console for details.');
 
-                            document.getElementById('loading').style.display = 'none';
+                            showAlert(
+                                'Error deleting all entries. Check console for details.'
+                            );
+
+
+                            document.getElementById(
+                                'loading'
+                            ).style.display = 'none';
+
                         });
+
                 },
 
                 true
+
             );
+
         }
 
+
+
+        /* =========================
+           END SESSION
+           ========================= */
 
         function endSession(start) {
 
             const rows =
-                document.querySelectorAll('#statusTable tbody tr[data-start]');
+                document.querySelectorAll(
+                    '#statusTable tbody tr[data-start]'
+                );
 
 
             for (const row of rows) {
 
-                if (row.getAttribute('data-start') === start) {
+                if (
+                    row.getAttribute(
+                        'data-start'
+                    ) === start
+                ) {
 
-                    row.classList.remove('active-row');
+                    row.classList.remove(
+                        'active-row'
+                    );
+
 
                     const timeLeftCell =
-                        row.querySelector('td[data-label="Time Left"]');
+                        row.querySelector(
+                            'td[data-label="Time Left"]'
+                        );
 
 
                     if (timeLeftCell) {
 
                         timeLeftCell.innerHTML =
                             '<b style="font-size: 1.5em;">ENDING</b>';
+
                     }
 
+
                     break;
+
                 }
+
             }
 
 
@@ -729,49 +1143,82 @@
                 `?action=end_session&start=${encodeURIComponent(start)}`;
 
 
-            document.getElementById('loading').style.display = 'block';
+            document.getElementById(
+                'loading'
+            ).style.display = 'block';
+
 
 
             fetch(scriptURL + params)
 
-                .then(response => response.json())
+                .then(
+                    response =>
+                        response.json()
+                )
 
                 .then(data => {
 
                     currentData = data;
 
+
                     renderTable();
 
-                    document.getElementById('loading').style.display = 'none';
+
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
                 })
 
                 .catch(error => {
 
-                    console.error('End session error:', error);
+                    console.error(
+                        'End session error:',
+                        error
+                    );
 
-                    showAlert('Error ending session.');
 
-                    document.getElementById('loading').style.display = 'none';
+                    showAlert(
+                        'Error ending session.'
+                    );
+
+
+                    document.getElementById(
+                        'loading'
+                    ).style.display = 'none';
+
                 });
+
         }
 
+
+
+        /* =========================
+           RENDER TABLE
+           ========================= */
 
         function renderTable() {
 
             const tbody =
-                document.querySelector('#statusTable tbody');
+                document.querySelector(
+                    '#statusTable tbody'
+                );
 
 
             tbody.innerHTML = '';
 
 
-            const now = new Date();
+            const now =
+                new Date();
+
 
 
             currentData.forEach(entry => {
 
+
                 const startDate =
                     new Date(entry.Start);
+
 
                 const endDate =
                     new Date(entry.End);
@@ -789,14 +1236,21 @@
                     '';
 
 
+
                 if (remainingMs > 0) {
 
+
                     const hoursLeft =
-                        Math.floor(remainingMs / 3600000);
+                        Math.floor(
+                            remainingMs / 3600000
+                        );
 
 
                     const minsLeft =
-                        Math.floor((remainingMs % 3600000) / 60000);
+                        Math.floor(
+                            (remainingMs % 3600000)
+                            / 60000
+                        );
 
 
                     left =
@@ -806,47 +1260,65 @@
                     rowClass =
                         'active-row';
 
+
                 } else {
+
 
                     left =
                         '<b>Session Ended</b>';
+
                 }
 
 
+
                 const timeStart =
-                    startDate.toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                    startDate.toLocaleTimeString(
+                        [],
+                        {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }
+                    );
 
 
                 const dateStart =
-                    startDate.toLocaleDateString([], {
-                        month: 'numeric',
-                        day: 'numeric'
-                    });
+                    startDate.toLocaleDateString(
+                        [],
+                        {
+                            month: 'numeric',
+                            day: 'numeric'
+                        }
+                    );
 
 
                 const formattedStart =
                     `<span style="font-size: 0.8em;">${dateStart}</span> - <b>${timeStart}</b>`;
 
 
+
                 const timeEnd =
-                    endDate.toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                    endDate.toLocaleTimeString(
+                        [],
+                        {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }
+                    );
 
 
                 const dateEnd =
-                    endDate.toLocaleDateString([], {
-                        month: 'numeric',
-                        day: 'numeric'
-                    });
+                    endDate.toLocaleDateString(
+                        [],
+                        {
+                            month: 'numeric',
+                            day: 'numeric'
+                        }
+                    );
 
 
                 const formattedEnd =
                     `<span style="font-size: 0.8em;">${dateEnd}</span> - <b>${timeEnd}</b>`;
+
 
 
                 const row =
@@ -864,55 +1336,89 @@
 
 
                 row.innerHTML = `
-                    <td data-label="Name">${entry.Name}</td>
 
-                    <td data-label="Start">${formattedStart}</td>
+                    <td data-label="Name">
+                        ${entry.Name}
+                    </td>
 
-                    <td data-label="End">${formattedEnd}</td>
+                    <td data-label="Start">
+                        ${formattedStart}
+                    </td>
 
-                    <td data-label="Time Left">${left}</td>
+                    <td data-label="End">
+                        ${formattedEnd}
+                    </td>
+
+                    <td data-label="Time Left">
+                        ${left}
+                    </td>
 
                     <td data-label="">
+
                         <button
                             class="delete-btn"
                             onclick="deleteEntry('${entry.Start}')">
+
                             X
+
                         </button>
 
                         ${
                             remainingMs > 0
+
                                 ? `<button
                                        class="end-btn mobile-only"
                                        onclick="endSession('${entry.Start}')">
+
                                        End
+
                                    </button>`
+
                                 : ''
                         }
+
                     </td>
+
                 `;
 
 
                 tbody.appendChild(row);
+
             });
+
         }
 
 
+
+        /* =========================
+           RESTORE LAST NAME
+           ========================= */
+
         const lastName =
-            localStorage.getItem('lastName');
+            localStorage.getItem(
+                'lastName'
+            );
 
 
         if (lastName) {
 
-            document.getElementById('name').value =
-                lastName;
+            document.getElementById(
+                'name'
+            ).value = lastName;
+
         }
 
+
+
+        /* INITIAL LOAD */
 
         loadData();
 
 
-        // Auto-refresh data and update "Time Left" every 10 seconds
-        //setInterval(loadData, 10000);
+
+        /* Auto-refresh currently disabled */
+
+        // setInterval(loadData, 10000);
 
     </script>
 
