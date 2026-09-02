@@ -78,6 +78,22 @@
             background-color: #444;
         }
 
+        .revision-box {
+            position: fixed;
+            top: 7px;
+            right: 7px;
+            min-width: 20px;
+            padding: 3px 5px;
+            box-sizing: border-box;
+            background-color: #333;
+            border: 1px solid #666;
+            color: #aaa;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1000;
+        }
+
         .delete-all-btn {
             background-color: #a33131;
             color: #fff;
@@ -368,6 +384,13 @@
 
 
 <body>
+
+    <div
+        class="revision-box"
+        title="Revision 1">
+        1
+    </div>
+
 
     <h1>EV Charging Status</h1>
 
@@ -742,8 +765,12 @@
                 function() {
 
                     if (
-                        passwordInput.value !==
+                        passwordInput.value
+                            .trim()
+                            .toLowerCase() !==
+
                         DELETE_PASSWORD
+                            .toLowerCase()
                     ) {
 
                         messageBox.textContent =
@@ -952,7 +979,13 @@
                 'block';
 
 
-            fetch(scriptURL)
+            const refreshURL =
+                scriptURL +
+                '?refresh=' +
+                Date.now();
+
+
+            fetch(refreshURL)
 
                 .then(
                     response =>
@@ -1124,7 +1157,7 @@
 
 
             const params =
-                `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}`;
+                `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}&_=${Date.now()}`;
 
 
             document.getElementById(
@@ -1133,54 +1166,44 @@
                 'block';
 
 
+            /*
+                Send the write request.
+
+                Do NOT wait for the response
+                before asking Sheet1 for the
+                updated data.
+            */
+
             fetch(
                 scriptURL +
                 params
             )
-
-                .then(
-                    response =>
-                        response.json()
-                )
-
-                .then(data => {
-
-                    currentData =
-                        data;
-
-                    renderTable();
-
-
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
-
-
-                    hoursInput.value =
-                        '';
-
-                })
-
                 .catch(error => {
 
                     console.error(
-                        'Fetch error:',
+                        'Submit response error:',
                         error
                     );
 
-
-                    showAlert(
-                        'Error submitting entry. Check console for details.'
-                    );
-
-
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
-
                 });
+
+
+            hoursInput.value =
+                '';
+
+
+            /*
+                Sheet1 has been updating almost
+                immediately.
+
+                Give it a brief moment, then
+                independently read Sheet1 again.
+            */
+
+            setTimeout(
+                loadData,
+                700
+            );
 
         }
 
@@ -1281,7 +1304,7 @@
 
 
                     const params =
-                        `?action=delete&start=${encodeURIComponent(start)}`;
+                        `?action=delete&start=${encodeURIComponent(start)}&_=${Date.now()}`;
 
 
                     document.getElementById(
@@ -1291,24 +1314,14 @@
 
 
                     /*
-                        Do not trust the delete response
-                        to repaint the page.
-
-                        The Sheet is the source of truth,
-                        so reload it after the request.
+                        Send delete request without
+                        waiting on the response.
                     */
 
                     fetch(
                         scriptURL +
                         params
                     )
-
-                        .then(() => {
-
-                            loadData();
-
-                        })
-
                         .catch(error => {
 
                             console.error(
@@ -1316,18 +1329,17 @@
                                 error
                             );
 
-
-                            /*
-                                The delete may still have
-                                reached Google successfully.
-
-                                Reload Sheet1 instead of
-                                displaying stale rows.
-                            */
-
-                            loadData();
-
                         });
+
+
+                    /*
+                        Re-read Sheet1 independently.
+                    */
+
+                    setTimeout(
+                        loadData,
+                        700
+                    );
 
                 }
 
@@ -1351,7 +1363,8 @@
                 function() {
 
                     const params =
-                        '?action=delete_all';
+                        '?action=delete_all&_=' +
+                        Date.now();
 
 
                     document.getElementById(
@@ -1361,21 +1374,14 @@
 
 
                     /*
-                        Same rule as individual Delete:
-                        always re-read Sheet1 afterward.
+                        Send Delete All without
+                        waiting on the response.
                     */
 
                     fetch(
                         scriptURL +
                         params
                     )
-
-                        .then(() => {
-
-                            loadData();
-
-                        })
-
                         .catch(error => {
 
                             console.error(
@@ -1383,17 +1389,17 @@
                                 error
                             );
 
-
-                            /*
-                                If Google performed the
-                                delete but the response
-                                failed, this clears the
-                                stale website rows.
-                            */
-
-                            loadData();
-
                         });
+
+
+                    /*
+                        Re-read Sheet1 independently.
+                    */
+
+                    setTimeout(
+                        loadData,
+                        700
+                    );
 
                 }
 
