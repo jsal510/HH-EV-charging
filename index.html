@@ -376,11 +376,6 @@
     <h1>EV Charging Status</h1>
 
 
-    <!--
-        novalidate prevents Chrome / Android from showing
-        native "Please fill out this field" messages.
-    -->
-
     <form onsubmit="submitEntry(); return false;" novalidate>
 
         <input
@@ -501,7 +496,11 @@
            CUSTOM ALERT
            ========================= */
 
-        function showAlert(message, buttonText = 'OK') {
+        function showAlert(
+            message,
+            buttonText = 'OK',
+            afterClose = null
+        ) {
 
             const modal =
                 document.getElementById('customModal');
@@ -531,6 +530,12 @@
             modalConfirmAction = function() {
 
                 closeModal();
+
+                if (afterClose) {
+
+                    afterClose();
+
+                }
 
             };
 
@@ -779,11 +784,6 @@
                     .trim();
 
 
-            /*
-                CUSTOM VALIDATION
-                No browser popup.
-            */
-
             if (!name && !hoursValue) {
 
                 showAlert(
@@ -831,7 +831,24 @@
             if (hours > 4.5) {
 
                 showAlert(
-                    'Max Time of 4.5 hrs.'
+
+                    'Max Time of 4.5 hrs.',
+
+                    'OK',
+
+                    function() {
+
+                        const hoursInput =
+                            document.getElementById(
+                                'hours'
+                            );
+
+                        hoursInput.value = '';
+
+                        hoursInput.focus();
+
+                    }
+
                 );
 
                 return;
