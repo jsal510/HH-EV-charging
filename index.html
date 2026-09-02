@@ -12,7 +12,7 @@
         content="width=device-width, initial-scale=1.0">
 
     <style>
-        /* AUG 6 1PM VERSION */
+        /* REV 2 */
 
         body {
             font-family: 'Roboto', sans-serif;
@@ -114,14 +114,26 @@
             background-color: #444;
         }
 
-        #loading {
-            display: none;
-            text-align: center;
+        #statusIndicator {
+            width: 190px;
+            height: 22px;
+            box-sizing: border-box;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            overflow: hidden;
+            background-color: #cfcfcf;
+            color: #222;
+            font-size: 9px;
             font-weight: bold;
-            color: #ffde21;
-            font-size: 1.4em;
-            margin-top: -4px;
-            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        #statusIndicator.loading {
+            background-color: #d6a700;
+            color: #222;
         }
 
         .table-container {
@@ -387,8 +399,8 @@
 
     <div
         class="revision-box"
-        title="Revision 1">
-        1
+        title="Revision 2">
+        2
     </div>
 
 
@@ -413,13 +425,13 @@
             enterkeyhint="done"
             placeholder="Hours">
 
-        <div id="loading">
-            - - - LOADING - - -
-        </div>
-
         <button type="submit">
             Submit
         </button>
+
+        <div id="statusIndicator">
+            Updated: --/-- - --:--:-- --
+        </div>
 
     </form>
 
@@ -522,6 +534,72 @@
         let modalConfirmAction = null;
 
         let modalCancelAction = null;
+
+
+        /* =========================
+           STATUS INDICATOR
+           ========================= */
+
+        function setStatusLoading() {
+
+            const status =
+                document.getElementById(
+                    'statusIndicator'
+                );
+
+            status.textContent =
+                'LOADING';
+
+            status.classList.add(
+                'loading'
+            );
+
+        }
+
+
+        function setStatusUpdated() {
+
+            const status =
+                document.getElementById(
+                    'statusIndicator'
+                );
+
+            const now =
+                new Date();
+
+
+            const date =
+                `${now.getMonth() + 1}/${now.getDate()}`;
+
+
+            const time =
+                now.toLocaleTimeString(
+                    [],
+                    {
+                        hour:
+                            'numeric',
+
+                        minute:
+                            '2-digit',
+
+                        second:
+                            '2-digit',
+
+                        hour12:
+                            true
+                    }
+                );
+
+
+            status.textContent =
+                `Updated: ${date} - ${time}`;
+
+
+            status.classList.remove(
+                'loading'
+            );
+
+        }
 
 
         /* =========================
@@ -973,10 +1051,7 @@
 
         function loadData() {
 
-            document.getElementById(
-                'loading'
-            ).style.display =
-                'block';
+            setStatusLoading();
 
 
             const refreshURL =
@@ -1010,10 +1085,7 @@
                         );
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
+                    setStatusUpdated();
 
                 })
 
@@ -1025,10 +1097,7 @@
                     );
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
+                    setStatusUpdated();
 
                 });
 
@@ -1160,10 +1229,7 @@
                 `?name=${encodeURIComponent(name)}&hours=${encodeURIComponent(hours)}&_=${Date.now()}`;
 
 
-            document.getElementById(
-                'loading'
-            ).style.display =
-                'block';
+            setStatusLoading();
 
 
             /*
@@ -1307,10 +1373,7 @@
                         `?action=delete&start=${encodeURIComponent(start)}&_=${Date.now()}`;
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'block';
+                    setStatusLoading();
 
 
                     /*
@@ -1367,10 +1430,7 @@
                         Date.now();
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'block';
+                    setStatusLoading();
 
 
                     /*
@@ -1464,10 +1524,7 @@
                 `?action=end_session&start=${encodeURIComponent(start)}`;
 
 
-            document.getElementById(
-                'loading'
-            ).style.display =
-                'block';
+            setStatusLoading();
 
 
             fetch(
@@ -1488,10 +1545,7 @@
                     renderTable();
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
+                    setStatusUpdated();
 
                 })
 
@@ -1508,10 +1562,7 @@
                     );
 
 
-                    document.getElementById(
-                        'loading'
-                    ).style.display =
-                        'none';
+                    setStatusUpdated();
 
                 });
 
